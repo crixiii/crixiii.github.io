@@ -762,13 +762,13 @@
         const pt    = trail[idx];
         const frac  = i / TRAIL_LEN;
         const alpha = frac * frac * 0.65;
-        const size  = 2.2 + frac * 2.8;
+        const size  = 1.2 + frac * 2.8;
         const hue   = 340 + frac * 30;  // deep red → soft pink toward cursor head
         if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
       }
     
       const pulse = 1 + Math.sin(cursorT * 3) * 0.12;
-      drawStar(cc, mouse.x, mouse.y, 5.5 * pulse, 0.95, 220);
+      drawStar(cc, mouse.x, mouse.y, 10.5 * pulse, 0.95, 220);
 
       cc.save();
       cc.globalAlpha = 0.35;
