@@ -762,8 +762,8 @@
         if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
       }
  
-      const pulse = 1 + Math.sin(cursorT * 3) * 0.12;
-      drawStar(cc, mouse.x, mouse.y, 15 * pulse, 0.95, 345);
+      const pulse = 2 + Math.sin(cursorT * 3) * 0.12;
+      drawStar(cc, mouse.x, mouse.y, 12 * pulse, 0.95, 345);
        
       cc.save();
       cc.globalAlpha = 0.35;
@@ -798,28 +798,21 @@
         };
       });
 
-
       const fakeStar = { r: 1.5, exploding: true };
       supernovae.push({
         cx, cy, star: fakeStar,
         phase: 'swell', age: 0,
-        ring: 0,
-        ringMax: 65 + Math.random() * 55,
-        ringAlpha: 0.0,
-        ejecta,
+        ring: 0,ringMax: 65 + Math.random() * 55,
+        ringAlpha: 0.0,ejecta,
       });
     }
-
  
-
     window.addEventListener('click', e => {
       launchSupernovaAt(e.clientX + window.scrollX, e.clientY + window.scrollY);
     });
+ 
 
 
-
-    // 
-    
     const observer = new IntersectionObserver(
       entries => entries.forEach(e => {
         if (e.isIntersecting) e.target.classList.add('visible');
@@ -829,9 +822,9 @@
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 
+
  </script>
 
 </body>
-  <div id="cursor-star"></div>
 
 </html>
