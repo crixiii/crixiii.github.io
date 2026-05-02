@@ -507,14 +507,31 @@
     /* cute stuff */
     #cursor-star {
       position: fixed;
-      width: 10px;
-      height: 10px;
+      width: 18px;
+      height: 18px;
       pointer-events: none;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(200,180,255,0.4), transparent);
-      box-shadow: 0 0 12px rgba(200,180,255,0.6);
       z-index: 9999;
       transform: translate(-50%, -50%);
+      
+      background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255, 172, 172, 0.6));
+      
+      clip-path: polygon(
+        50% 0%, 
+        61% 35%, 
+        98% 35%, 
+        68% 57%, 
+        79% 91%, 
+        50% 70%, 
+        21% 91%, 
+        32% 57%, 
+        2% 35%, 
+        39% 35%
+      );
+
+      box-shadow:
+        0 0 6px rgba(255,255,255,0.9),
+        0 0 18px rgba(180,140,255,0.6),
+        0 0 30px rgba(120,80,255,0.4);
     }
 
     .trail {
@@ -527,6 +544,7 @@
     opacity: 0.7;
     transform: translate(-50%, -50%);
     animation: fadeOut 0.5s linear forwards;
+    animation: twinkle 1.5s ease-in-out infinite;
   }
 
   @keyframes fadeOut {
@@ -534,6 +552,14 @@
       opacity: 0;
       transform: translate(-50%, -50%) scale(0.3);
     }
+  }
+  @keyframes twinkle {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%      { transform: translate(-50%, -50%) scale(1.2); }
+  }
+
+  #cursor-star {
+    animation: twinkle 1.8s ease-in-out infinite;
   }
 
     </style>
@@ -706,7 +732,7 @@
           phase: Math.random()*Math.PI*2,
           speed: Math.random()*0.2+0.05,
           exploding: false,
-          tint: 'rgba(255,255,255,'  
+          tint: 'rgba(255,255,275,'  
         });
       }
     }
@@ -788,8 +814,8 @@
         ringMax: 55 + Math.random() * 45,
         ringAlpha: 0.0,
         ejecta,
-        label: `SN ${new Date().getFullYear()}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
-        labelAlpha: 0,
+        // label: `SN ${new Date().getFullYear()}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
+        // labelAlpha: 0,
       });
     }
 
@@ -937,8 +963,8 @@
 
       function animate() {
         // easing (this creates the trail/lag)
-        posX += (mouseX - posX) * 0.15;
-        posY += (mouseY - posY) * 0.15;
+        posX += (mouseX - posX) * 0.55;
+        posY += (mouseY - posY) * 0.55;
 
         cursor.style.left = posX + 'px';
         cursor.style.top  = posY + 'px';
