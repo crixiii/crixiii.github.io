@@ -299,8 +299,11 @@
         transition: border-color 0.3s, background 0.3s;
       }
  
-    
-    .stat-card:hover { border-color: var(--borderhover); background: rgba(255, 80, 120, 0.09); }
+    .stat-card:hover {
+      border-color: var(--borderhover);background: rgba(255, 80, 120, 0.09);
+      box-shadow:0 0 12px rgba(255, 80, 120, 0.15),
+        0 0 30px rgba(255, 80, 120, 0.07),inset 0 0 12px rgba(255, 80, 120, 0.04);
+    }
  
     .stat-label {
       font-size: 9px;
@@ -391,6 +394,31 @@
       .reveal.visible { opacity: 1; transform: none; }
 
     /* cute stuff */
+    .type-cursor {
+      color: var(--accent);
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+      animation: pulse-dot 2s ease-in-out infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1;   box-shadow: 0 0 5px var(--accent); }
+      50%       { opacity: 0.4; box-shadow: 0 0 12px var(--accent); }
+    }
 
     </style>
   
@@ -471,7 +499,7 @@
       <div class="projects-grid">
  
         <a class="project-card" href="#">
-          <p class="project-type">Research ✦ Ongoing</p>
+          <p class="project-type"><span class="status-dot"></span>Research ✦ Ongoing</p>
           <p class="project-name">frb</p>
           <p class="project-desc">
             description
@@ -480,7 +508,7 @@
         </a>
  
         <a class="project-card" href="#">
-          <p class="project-type">Research ✦ Ongoing</p>
+          <p class="project-type"><span class="status-dot"></span>Research ✦ Ongoing</p>
           <p class="project-name">grb</p>
           <p class="project-desc">
             description
@@ -767,7 +795,7 @@
         if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
       }
  
-      const pulse = 2 + Math.sin(cursorT * 3) * 0.12;
+      const pulse = 1 + Math.sin(cursorT * 3) * 0.12;
       drawStar(cc, mouse.x, mouse.y, 12 * pulse, 0.95, 345);
        
       cc.save();
