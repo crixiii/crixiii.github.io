@@ -31,22 +31,122 @@
 
       /* make a pretty bkg! */
       body {
-        background: #04000c;
+        background: #050012;
         color: var(--maintext);
         font-family: 'Figtree', sans-serif;
-        font_weight: 325;
+        font-weight: 325;
         overflow-x: hidden;
         position: relative;
       }
 
-      
+      /* idk what im doing yet */
+      #starfield {
+        position: absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .bk-gradient {
+        display: none;
+      }
+
+      /* navigation */
+      nav {
+        position: fluid;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.4rem 3rem;
+        background: rgba(7, 0, 16, 0.55);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(180, 120, 255, 0.08);
+        transition: 0.2s;
+      }
+
+      .nav-logo {
+        font-family: 'Figtree', sans-serif;
+        font-style: italic;
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--accentcolour);
+        text-decoration: none;letter-spacing: 0.05em;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2.5rem;
+        list-style: none;
+      }
+
+      .nav-links a {
+        font-weight: 300;
+        font-size: 0.75rem;
+        letter-spacing: 0.25em;
+        text-transform: lowercase;
+        color: var(--accentfaint);
+        text-decoration: none;
+        position: relative;
+        transition: color 0.25s;
+      }
+
+      .nav-links a::after{
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width:0;
+        height: 1px;
+        background: var(--accentcolour);
+        transition: width 0.3s ease;
+    }
+ 
+    .nav-links a:hover { color: var(--accentcolour); }
+    .nav-links a:hover::after { width: 100%; }
+ 
+
+    section {
+      position: relative;
+      z-index: 10;
+    }
+
+
+    #hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+    }
+ 
+    .eyebrow {
+      font-weight: 200;
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accentfaint);
+      margin-bottom: 1.6rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.3s forwards;
+    }
+
       
       
     </style>
   
 </head>
 <body>
-  <h1>:)</h1>
-  <p>back to working!</p>
+  <h1>idk what i am doing</h1>
+  <p>>:)</p>
 </body>
 </html>
