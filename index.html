@@ -517,9 +517,24 @@
       transform: translate(-50%, -50%);
     }
 
-    body {
-      cursor: none;
+    .trail {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.8), transparent);
+    opacity: 0.7;
+    transform: translate(-50%, -50%);
+    animation: fadeOut 0.5s linear forwards;
+  }
+
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.3);
     }
+  }
 
     </style>
   
@@ -895,13 +910,44 @@
 
 
 
-    
-  const cursor = document.getElementById('cursor-star');
+    window.addEventListener('load', () => {
+      const cursor = document.getElementById('cursor-star');
 
-  window.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-  });
+      let mouseX = 0, mouseY = 0;
+      let posX = 0, posY = 0;
+
+      const trail = [];
+
+      window.addEventListener('mousemove', e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        const dot = document.createElement('div');
+        dot.className = 'trail';
+        dot.style.left = e.clientX + 'px';
+        dot.style.top  = e.clientY + 'px';
+        document.body.appendChild(dot);
+
+        trail.push(dot);
+
+        setTimeout(() => {
+          dot.remove();
+        }, 500);
+      });
+
+      function animate() {
+        // easing (this creates the trail/lag)
+        posX += (mouseX - posX) * 0.15;
+        posY += (mouseY - posY) * 0.15;
+
+        cursor.style.left = posX + 'px';
+        cursor.style.top  = posY + 'px';
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    });
  </script>
 
 </body>
