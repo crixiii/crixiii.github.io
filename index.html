@@ -51,9 +51,16 @@
         z-index: 0;
       }
 
-      .bk-gradient {
-        display: none;
-      }
+    .bg-gradient {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 0%, #2a0a4a 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 100%, #1a0535 0%, transparent 55%),
+        radial-gradient(ellipse 100% 100% at 50% 50%, #0e0020 0%, #050008 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
 
       /* navigation */
       nav {
@@ -505,62 +512,6 @@
     }
 
     /* cute stuff */
-    #cursor-star {
-      position: fixed;
-      width: 18px;
-      height: 18px;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      
-      background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255, 172, 172, 0.6));
-      
-      clip-path: polygon(
-        50% 0%, 
-        61% 35%, 
-        98% 35%, 
-        68% 57%, 
-        79% 91%, 
-        50% 70%, 
-        21% 91%, 
-        32% 57%, 
-        2% 35%, 
-        39% 35%
-      );
-
-      box-shadow:
-        0 0 6px rgba(255,255,255,0.9),
-        0 0 18px rgba(180,140,255,0.6),
-        0 0 30px rgba(120,80,255,0.4);
-    }
-
-    .trail {
-    position: fixed;
-    width: 6px;
-    height: 6px;
-    pointer-events: none;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.8), transparent);
-    opacity: 0.7;
-    transform: translate(-50%, -50%);
-    animation: fadeOut 0.5s linear forwards;
-    animation: twinkle 1.5s ease-in-out infinite;
-  }
-
-  @keyframes fadeOut {
-    to {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.3);
-    }
-  }
-  @keyframes twinkle {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50%      { transform: translate(-50%, -50%) scale(1.2); }
-  }
-
-  #cursor-star {
-    animation: twinkle 1.8s ease-in-out infinite;
-  }
 
     </style>
   
@@ -697,11 +648,8 @@
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
 
-    const nebulaCanvas = document.createElement('canvas');
-    const nCtx = nebulaCanvas.getContext('2d');
 
     let stars = [];
-    let supernovae = [];
 
     function resize() {
       const W = document.documentElement.scrollWidth;
@@ -710,10 +658,6 @@
       canvas.width = W;
       canvas.height = H;
 
-      nebulaCanvas.width = W * 1.2;
-      nebulaCanvas.height = H * 1.2;
-
-      drawNebula(nebulaCanvas.width, nebulaCanvas.height);
       buildStars(W, H);
     }
     window.addEventListener('resize', resize);
@@ -737,33 +681,9 @@
       }
     }
 
-    function blob(c, x, y, r, col) {
-      const g = c.createRadialGradient(x,y,0,x,y,r);
-      g.addColorStop(0,col);
-      g.addColorStop(1,"transparent");
-      c.fillStyle = g;
-      c.beginPath();
-      c.arc(x,y,r,0,Math.PI*2);
-      c.fill();
-    }
-
-    function drawNebula(W,H){
-      nCtx.clearRect(0,0,W,H);
-      // inside draw()
-      ctx.drawImage(nebulaCanvas, -W*0.1, -H*0.1);
-      nCtx.fillStyle="#050012";
-      nCtx.fillRect(0,0,W,H);
-
-      for(let i=0;i<35;i++){
-        blob(
-          nCtx,
-          Math.random()*W,
-          Math.random()*H,
-          Math.random()*350+200,
-          `rgba(${80+Math.random()*80},${20+Math.random()*40},${120+Math.random()*100},0.08)`
-        );
-      }
-    }
+    canvas.width  = document.documentElement.scrollWidth;
+    canvas.height = document.documentElement.scrollHeight;
+    buildStars(canvas.width, canvas.height);
 
     // let mouseX=0.5, mouseY=0.5;
     // let targetX=0.5, targetY=0.5;
@@ -774,7 +694,7 @@
     // });
 
     // idk what im doing 
-    // const supernovae = [];
+    const supernovae = [];
 
     function launchSupernova() {
       const scrollTop = window.scrollY;
@@ -814,8 +734,8 @@
         ringMax: 55 + Math.random() * 45,
         ringAlpha: 0.0,
         ejecta,
-        // label: `SN ${new Date().getFullYear()}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
-        // labelAlpha: 0,
+        label: `SN ${new Date().getFullYear()}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
+        labelAlpha: 0,
       });
     }
 
@@ -825,13 +745,16 @@
     }, 4000);
 
     // 
+
+
+    // 
+
+
     let t = 0;
 
     function draw() {
       const W = canvas.width, H = canvas.height;
       ctx.clearRect(0, 0, W, H);
-
-
 
       for (const s of stars) {
         if (s.exploding) continue;
@@ -925,7 +848,89 @@
 
     draw();
 
+    // cursor
 
+    
+    const cursorCanvas = document.createElement('canvas');
+    cursorCanvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+    document.body.appendChild(cursorCanvas);
+    const cc = cursorCanvas.getContext('2d');
+
+    function resizeCursor() {
+      cursorCanvas.width  = window.innerWidth;
+      cursorCanvas.height = window.innerHeight;
+    }
+    resizeCursor();
+    window.addEventListener('resize', resizeCursor);
+
+    let mouse = { x: -200, y: -200 };
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+    // cursor trail
+    
+    const TRAIL_LEN = 28;
+    const trail = Array.from({ length: TRAIL_LEN }, () => ({ x: -200, y: -200, age: 1 }));
+    let trailHead = 0;
+
+    function drawStar(c, x, y, size, alpha, hue) {
+      const spikes = 5;
+      const outer  = size;
+      const inner  = size * 0.38;
+      c.save();
+      c.globalAlpha = alpha;
+      c.translate(x, y);
+      c.rotate(Math.PI / 4); 
+      c.beginPath();
+      for (let i = 0; i < spikes * 2; i++) {
+        const r     = i % 2 === 0 ? outer : inner;
+        const angle = (i * Math.PI) / spikes;
+        i === 0 ? c.moveTo(Math.cos(angle)*r, Math.sin(angle)*r)
+                : c.lineTo(Math.cos(angle)*r, Math.sin(angle)*r);
+      }
+      c.closePath();
+      c.fillStyle = `hsla(${hue},80%,92%,1)`;
+      c.shadowColor = `hsla(${hue},90%,85%,0.9)`;
+      c.shadowBlur  = size * 2.5;
+      c.fill();
+      c.restore();
+    }
+
+    let cursorT = 0;
+    function drawCursor() {
+      cc.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+      trail[trailHead] = { x: mouse.x, y: mouse.y };
+      trailHead = (trailHead + 1) % TRAIL_LEN;
+      for (let i = 0; i < TRAIL_LEN; i++) {
+        const idx  = (trailHead + i) % TRAIL_LEN;
+        const pt   = trail[idx];
+        const frac = i / TRAIL_LEN;  // 0 -1 is old to new
+        const alpha = frac * frac * 0.65;    
+        const size  = 1.2 + frac * 2.8;
+        const hue   = 210 + frac * 60; // blue to purple
+        if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
+      }
+    
+      const pulse = 1 + Math.sin(cursorT * 3) * 0.12;
+      drawStar(cc, mouse.x, mouse.y, 5.5 * pulse, 0.95, 220);
+
+      cc.save();
+      cc.globalAlpha = 0.35;
+      cc.strokeStyle = 'rgba(180,210,255,0.7)';
+      cc.lineWidth = 0.6;
+      const arm = 9;
+      cc.beginPath();
+      cc.moveTo(mouse.x - arm, mouse.y); cc.lineTo(mouse.x + arm, mouse.y);
+      cc.moveTo(mouse.x, mouse.y - arm); cc.lineTo(mouse.x, mouse.y + arm);
+      cc.stroke();
+      cc.restore();
+
+      cursorT += 0.06;
+      requestAnimationFrame(drawCursor);
+    }
+    drawCursor();
+
+    // 
+    
     const observer = new IntersectionObserver(
       entries => entries.forEach(e => {
         if (e.isIntersecting) { e.target.classList.add('visible'); }
@@ -935,45 +940,6 @@
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 
-
-    window.addEventListener('load', () => {
-      const cursor = document.getElementById('cursor-star');
-
-      let mouseX = 0, mouseY = 0;
-      let posX = 0, posY = 0;
-
-      const trail = [];
-
-      window.addEventListener('mousemove', e => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-
-        const dot = document.createElement('div');
-        dot.className = 'trail';
-        dot.style.left = e.clientX + 'px';
-        dot.style.top  = e.clientY + 'px';
-        document.body.appendChild(dot);
-
-        trail.push(dot);
-
-        setTimeout(() => {
-          dot.remove();
-        }, 500);
-      });
-
-      function animate() {
-        // easing (this creates the trail/lag)
-        posX += (mouseX - posX) * 0.55;
-        posY += (mouseY - posY) * 0.55;
-
-        cursor.style.left = posX + 'px';
-        cursor.style.top  = posY + 'px';
-
-        requestAnimationFrame(animate);
-      }
-
-      animate();
-    });
  </script>
 
 </body>
