@@ -692,12 +692,6 @@
             ctx.fillStyle = `hsla(${p.hue},60%,80%,${p.life * 0.4})`; ctx.fill();
           }
 
-          if (sn.labelAlpha > 0.01) {
-            ctx.font = '300 8px Figtree, sans-serif';
-            ctx.letterSpacing = '0.12em';
-            ctx.fillStyle = `rgba(170,190,255,${sn.labelAlpha})`;
-            ctx.fillText(sn.label, sn.cx + sn.ring * 0.5 + 6, sn.cy - 5);
-          }
 
         } else if (sn.phase === 'done') {
           sn.star.exploding = false;
@@ -768,7 +762,7 @@
         const pt    = trail[idx];
         const frac  = i / TRAIL_LEN;
         const alpha = frac * frac * 0.65;
-        const size  = 1.2 + frac * 2.8;
+        const size  = 2.2 + frac * 2.8;
         const hue   = 340 + frac * 30;  // deep red → soft pink toward cursor head
         if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
       }
