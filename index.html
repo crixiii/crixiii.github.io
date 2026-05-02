@@ -11,28 +11,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
   
     <style>
+      * { cursor: none !important; }
       /* page setup- colours etc i think :D */
       *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
       :root {
-        --darkestpurple: #0a0010;
-        --darkpurple: #0e0020;
-        --normpurple: #1a0535;
-        --purpleglow: #2a0a4a;
-        --accent: #c9a8f0;
-        --accentdim: #7483ad;
-        --accentfaint: #565080;
-        --maintext: #f0e8ff;
-        --secondtext: #c8b8e8;
-        --fainttext: #8a7aaa;
-        --border: rgba(180, 120, 255, 0.12);
-        --borderhover: rgba(180, 120, 255, 0.3);
+        --darkestred:#100005;
+        --darkred:#1a0008;
+        --normred: #2d0010;
+        --redglow:#4a0000;
+        --accent: #f0aea8;
+        --accentdim:#ad7c74;
+        --accentfaint:#805050;
+        --maintext:#fff0f4;
+        --secondtext:#e8b8b8;
+        --fainttext:#aa7a7a;
+        --border: rgba(255, 92, 80, 0.12);
+        --borderhover:rgba(255, 89, 80, 0.3);
       }
+
 
       html { scroll-behavior: smooth; }
 
       /* make a pretty bkg! */
       body {
-        background: #050012;
+        background: #100005;
         color: var(--maintext);
         font-family: 'Figtree', sans-serif;
         font-weight: 325;
@@ -51,32 +53,31 @@
         z-index: 0;
       }
 
-    .bg-gradient {
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 20% 0%, #2a0a4a 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 100%, #1a0535 0%, transparent 55%),
-        radial-gradient(ellipse 100% 100% at 50% 50%, #0e0020 0%, #050008 100%);
-      z-index: 0;
-      pointer-events: none;
-    }
+      .bg-gradient {
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(ellipse 80% 60% at 20% 0%,   #4a0018 0%, transparent 60%),
+          radial-gradient(ellipse 60% 50% at 80% 100%,  #2d0010 0%, transparent 55%),
+          radial-gradient(ellipse 100% 100% at 50% 50%, #1a0008 0%, #0a0003 100%);
+        z-index: 0;
+        pointer-events: none;
+      }
+
 
       /* navigation */
       nav {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
+        top: 0; left: 0; right: 0;
         z-index: 100;
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 1.4rem 3rem;
-        background: rgba(7, 0, 16, 0.55);
+        background: rgba(16, 0, 5, 0.55);
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
-        border-bottom: 1px solid rgba(180, 120, 255, 0.08);
+        border-bottom: 1px solid rgba(255, 80, 120, 0.08);
         transition: 0.2s;
       }
 
@@ -213,26 +214,27 @@
       display: inline-block;
     }
  
+
     .btn-primary {
-      background: rgba(180, 120, 255, 0.12);
-      border: 1px solid rgba(180, 120, 255, 0.45);
-      color: #d4adff;
-    }
+        background: rgba(255, 80, 120, 0.10);
+        border: 1px solid rgba(255, 80, 120, 0.40);
+        color: #f0a8c0;
+      }
     .btn-primary:hover {
-      background: rgba(180, 120, 255, 0.25);
-      border-color: rgba(180, 120, 255, 0.8);
-      color: #ead0ff;
-    }
+        background: rgba(255, 80, 120, 0.22);
+        border-color: rgba(255, 80, 120, 0.75);
+        color: #ffd0e0;
+      }
 
     .btn-ghost {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--accentfaint);
-    }
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--accentfaint);
+      }
     .btn-ghost:hover {
-      border-color: rgba(255, 255, 255, 0.26);
-      color: var(--secondtext);
-    }
+        border-color: rgba(255, 255, 255, 0.26);
+        color: var(--secondtext);
+      }
 
     /*  */
     
@@ -271,19 +273,13 @@
     }
  
     .section-divider {
-      width: 32px;
-      height: 1px;
-      background: rgba(180,120,255,0.35);
-      margin-bottom: 2rem;
-    }
+        width: 32px; height: 1px;
+        background: rgba(255, 80, 120, 0.35);
+        margin-bottom: 2rem;
+      }
  
     /* about me */
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: start;
-    }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
  
     @media (max-width: 640px) {
       .about-grid { grid-template-columns: 1fr; }
@@ -291,31 +287,20 @@
       .nav-links { gap: 1.5rem; }
     }
  
-    .about-bio p {
-      font-size: 0.9rem;
-      color: var(--fainttext);
-      line-height: 1.95;
-      margin-bottom: 1rem;
-    }
+      .about-bio p { font-size: 0.9rem; color: var(--fainttext); line-height: 1.95; margin-bottom: 1rem; }
+
+      .about-stats { display: flex; flex-direction: column; gap: 1.2rem; }
+
+      .stat-card {
+        background: rgba(255, 80, 120, 0.04);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        padding: 1.1rem 1.3rem;
+        transition: border-color 0.3s, background 0.3s;
+      }
  
-    .about-stats {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-    }
- 
-    .stat-card {
-      background: rgba(180, 120, 255, 0.05);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 1.1rem 1.3rem;
-      transition: border-color 0.3s, background 0.3s;
-    }
- 
-    .stat-card:hover {
-      border-color: var(--borderhover);
-      background: rgba(180, 120, 255, 0.09);
-    }
+    
+    .stat-card:hover { border-color: var(--borderhover); background: rgba(255, 80, 120, 0.09); }
  
     .stat-label {
       font-size: 9px;
@@ -335,22 +320,9 @@
 
     /* intrests */
 
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1.4rem;
-    }
- 
-    .tag {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--accentfaint);
-      border: 1px solid rgba(180,120,255,0.2);
-      border-radius: 2px;
-      padding: 0.3rem 0.7rem;
-    }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.4rem; }
+    .tag { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accentfaint); border: 1px solid rgba(255,80,120,0.2); border-radius: 2px; padding: 0.3rem 0.7rem; }
+
 
     /* projects :D */
     
@@ -361,155 +333,62 @@
       margin-top: 0.5rem;
     }
  
-    .project-card {
-      background: rgba(180, 120, 255, 0.04);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 1.6rem;
-      text-decoration: none;
-      display: block;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
- 
-    .project-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(80deg, transparent, rgba(180,120,255,0.5), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
- 
-    .project-card:hover {
-      border-color: var(--borderhover);
-      background: rgba(180, 120, 255, 0.08);
-      transform: translateY(-2px);
-    }
- 
-    .project-card:hover::before { opacity: 1; }
- 
-    .project-type {
-      font-size: 9px;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--accentfaint);
-      margin-bottom: 0.7rem;
-    }
- 
-    .project-name {
-      font-family: 'Figtree', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 400;
-      color: var(--secondtext);
-      margin-bottom: 0.6rem;
-      line-height: 1.3;
-    }
- 
-    .project-desc {
-      font-size: 0.82rem;
-      color: var(--fainttext);
-      line-height: 1.75;
-    }
- 
-    .project-arrow {
-      display: inline-block;
-      margin-top: 1rem;
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--fainttext);
-      transition: color 0.25s;
-    }
- 
-    .project-card:hover .project-arrow { color: var(--accent); }
- 
+      .project-card {
+        background: rgba(255, 80, 120, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        padding: 1.6rem;
+        text-decoration: none;
+        display: block;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
 
-    .cv-timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    } 
-    .cv-entry {
-      display: grid;
-      grid-template-columns: 110px 1fr;
-      gap: 1.5rem;
-      padding: 1.5rem 0;
-      border-bottom: 1px solid rgba(180,120,255,0.07);
-    } 
-    .cv-entry:first-child { border-top: 1px solid rgba(180,120,255,0.07); }
-     .cv-year {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      color: var(--accentfaint);
-      padding-top: 0.2rem;
-      text-align: right;
-      text-transform: uppercase;
-    }
- 
-    .cv-title {
-      font-family: 'Figtree', sans-serif;
-      font-size: 1rem;
-      font-weight: 400;
-      color: var(--secondtext);
-      margin-bottom: 0.25rem;
-    }
- 
-    .cv-place {
-      font-size: 0.78rem;
-      color: var(--accentdim);
-      letter-spacing: 0.08em;
-      margin-bottom: 0.4rem;
-    }
- 
-    .cv-detail {
-      font-size: 0.82rem;
-      color: var(--fainttext);
-      line-height: 1.75;
-    }
- 
-    .cv-download {
-      margin-top: 2.5rem;
-    }
- 
-    footer {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-      padding: 2.5rem 2rem;
-      font-weight: 200;
-      font-size: 10px;
-      letter-spacing: 0.25em;
-      color: var(--accentfaint);
-      border-top: 1px solid rgba(180,120,255,0.06);
-    }
- 
-    footer a {
-      color: var(--accentfaint);
-      text-decoration: none;
-      transition: color 0.25s;
-    }
-    footer a:hover { color: var(--accentdim); }
+      .project-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(80deg, transparent, rgba(255,80,120,0.5), transparent);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
- 
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
- 
-    .reveal.visible {
-      opacity: 1;
-      transform: none;
-    }
+      .project-card:hover { border-color: var(--borderhover); background: rgba(255,80,120,0.07); transform: translateY(-2px); }
+      .project-card:hover::before { opacity: 1; }
+
+      .project-type { font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accentfaint); margin-bottom: 0.7rem; }
+      .project-name { font-size: 1.05rem; font-weight: 400; color: var(--secondtext); margin-bottom: 0.6rem; line-height: 1.3; }
+      .project-desc { font-size: 0.82rem; color: var(--fainttext); line-height: 1.75; }
+      .project-arrow { display: inline-block; margin-top: 1rem; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--fainttext); transition: color 0.25s; }
+      .project-card:hover .project-arrow { color: var(--accent); }
+
+      .cv-timeline { display: flex; flex-direction: column; gap: 0; }
+      .cv-entry { display: grid; grid-template-columns: 110px 1fr; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid rgba(255,80,120,0.07); }
+      .cv-entry:first-child { border-top: 1px solid rgba(255,80,120,0.07); }
+      .cv-year { font-size: 10px; letter-spacing: 0.2em; color: var(--accentfaint); padding-top: 0.2rem; text-align: right; text-transform: uppercase; }
+      .cv-title { font-size: 1rem; font-weight: 400; color: var(--secondtext); margin-bottom: 0.25rem; }
+      .cv-place { font-size: 0.78rem; color: var(--accentdim); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+      .cv-detail { font-size: 0.82rem; color: var(--fainttext); line-height: 1.75; }
+      .cv-download { margin-top: 2.5rem; }
+
+      footer {
+        position: relative; z-index: 10;
+        text-align: center; padding: 2.5rem 2rem;
+        font-weight: 200; font-size: 10px; letter-spacing: 0.25em;
+        color: var(--accentfaint);
+        border-top: 1px solid rgba(255,80,120,0.06);
+      }
+      footer a { color: var(--accentfaint); text-decoration: none; transition: color 0.25s; }
+      footer a:hover { color: var(--accentdim); }
+
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+      .reveal.visible { opacity: 1; transform: none; }
 
     /* cute stuff */
 
@@ -524,8 +403,8 @@
   <nav>
     <a class="nav-logo" href="#hero">crixiii</a>
     <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#projects">Projects</a></li>
+      <li><a href="#about">about</a></li>
+      <li><a href="#projects">my work</a></li>
       <li><a href="#cv">CV</a></li>
     </ul>
   </nav>
@@ -647,36 +526,27 @@
     // setup  
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
-
-
     let stars = [];
 
     function resize() {
-      const W = document.documentElement.scrollWidth;
-      const H = document.documentElement.scrollHeight;
-
-      canvas.width = W;
-      canvas.height = H;
-
-      buildStars(W, H);
+      canvas.width  = document.documentElement.scrollWidth;
+      canvas.height = document.documentElement.scrollHeight;
+      buildStars(canvas.width, canvas.height);
     }
     window.addEventListener('resize', resize);
     window.addEventListener('load', resize);
 
-    // space things?
-    function buildStars(W,H){
-      stars=[];
-
-      for(let i=0;i<3000;i++){
+    function buildStars(W, H) {
+      stars = [];
+      for (let i = 0; i < 3000; i++) {
         stars.push({
-          x: Math.random(),
-          y: Math.random(),
-          r: Math.pow(Math.random(),4)*2,
-          base: Math.random()*0.25,
-          phase: Math.random()*Math.PI*2,
-          speed: Math.random()*0.2+0.05,
+          x: Math.random(), y: Math.random(),
+          r: Math.pow(Math.random(), 4) * 2,
+          base: Math.random() * 0.25,
+          phase: Math.random() * Math.PI * 2,
+          speed: Math.random() * 0.2 + 0.05,
           exploding: false,
-          tint: 'rgba(255,255,275,'  
+          tint: 'rgba(255,240,245,',
         });
       }
     }
@@ -684,6 +554,7 @@
     canvas.width  = document.documentElement.scrollWidth;
     canvas.height = document.documentElement.scrollHeight;
     buildStars(canvas.width, canvas.height);
+
 
     // let mouseX=0.5, mouseY=0.5;
     // let targetX=0.5, targetY=0.5;
@@ -730,12 +601,8 @@
       supernovae.push({
         cx, cy, star,
         phase: 'swell', age: 0,
-        ring: 0,
-        ringMax: 55 + Math.random() * 45,
-        ringAlpha: 0.0,
-        ejecta,
-        label: `SN ${new Date().getFullYear()}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
-        labelAlpha: 0,
+        ring: 0, ringMax: 55 + Math.random() * 45,
+        ringAlpha: 0.0, ejecta,
       });
     }
 
@@ -745,10 +612,6 @@
     }, 4000);
 
     // 
-
-
-    // 
-
 
     let t = 0;
 
@@ -901,12 +764,12 @@
       trail[trailHead] = { x: mouse.x, y: mouse.y };
       trailHead = (trailHead + 1) % TRAIL_LEN;
       for (let i = 0; i < TRAIL_LEN; i++) {
-        const idx  = (trailHead + i) % TRAIL_LEN;
-        const pt   = trail[idx];
-        const frac = i / TRAIL_LEN;  // 0 -1 is old to new
-        const alpha = frac * frac * 0.65;    
+        const idx   = (trailHead + i) % TRAIL_LEN;
+        const pt    = trail[idx];
+        const frac  = i / TRAIL_LEN;
+        const alpha = frac * frac * 0.65;
         const size  = 1.2 + frac * 2.8;
-        const hue   = 210 + frac * 60; // blue to purple
+        const hue   = 340 + frac * 30;  // deep red → soft pink toward cursor head
         if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
       }
     
