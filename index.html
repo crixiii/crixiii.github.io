@@ -747,6 +747,11 @@
  
 
     let cursorT = 0;
+
+    const TRAIL_LEN = 28;
+    const trail = Array.from({ length: TRAIL_LEN }, () => ({ x: -200, y: -200 }));
+    let trailHead = 0;
+
     function drawCursor() {
       cc.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
       trail[trailHead] = { x: mouse.x, y: mouse.y };
