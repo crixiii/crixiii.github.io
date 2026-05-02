@@ -795,8 +795,8 @@
         if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
       }
  
-      const pulse = 1 + Math.sin(cursorT * 3) * 0.12;
-      drawStar(cc, mouse.x, mouse.y, 12 * pulse, 0.95, 345);
+      const pulse = 1 + Math.sin(cursorT * 3) * 12;
+      drawStar(cc, mouse.x, mouse.y, 1 * pulse, 0.95, 345);
        
       cc.save();
       cc.globalAlpha = 0.35;
