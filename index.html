@@ -182,10 +182,10 @@
 
      
     .hero-desc {
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: var(--fainttext);
       max-width: 420px;
-      line-height: 3;
+      line-height: 1.9;
       letter-spacing: 0.04em;
       margin-bottom: 2.5rem;
       opacity: 0;
@@ -374,19 +374,19 @@
         top: 0;bottom: 0;
         width: 1px;background: rgba(255,80,120,0.08);
       }
-      .cv-entry {display: grid;grid-template-columns: 140px 1fr;gap: 3rem;}
+      .cv-entry {display: grid;grid-template-columns: 140px 1fr;gap: 3rem;padding: 2.2rem 0;border-bottom: 1px solid rgba(255,80,120,0.07); }
       .cv-entry:first-child { border-top: 1px solid rgba(255,80,120,0.07); }
       .cv-year { font-size: 10px; letter-spacing: 0.2em; color: var(--accentfaint); padding-top: 0.2rem; text-align: right; text-transform: uppercase; }
-      .cv-title { font-size: 1rem; font-weight: 400; color: var(--secondtext); margin-bottom: 0.25rem; }
-      .cv-place { font-size: 0.78rem; color: var(--accentdim); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
-      .cv-detail { font-size: 0.82rem; color: var(--fainttext); line-height: 1.75; }
+      .cv-title { font-size: 1rem; font-weight: 400; color: var(--secondtext); margin-bottom: 0.5rem; }
+      .cv-place { font-size: 0.78rem; color: var(--accentdim); letter-spacing: 0.08em; margin-bottom: 0.7rem; }
+      .cv-detail { font-size: 0.82rem; color: var(--fainttext); line-height: 2.0; }
       .cv-download { margin-top: 2.5rem; }
 
       #cv .section-inner {
         max-width: none;
         width: 100%;
         margin: 0;
-        padding: 7rem 4rem; 
+        padding: 7rem 6rem; 
       }
 
       footer {
@@ -931,7 +931,7 @@
         if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
       }
  
-      const pulse = 1 + Math.sin(cursorT * 0.3) *  0.012;
+      const pulse = 1 + Math.sin(cursorT * 0.3) *  0.09;
       drawStar(cc, mouse.x, mouse.y, 1 * pulse, 0.95, 345);
        
       // cc.save();
