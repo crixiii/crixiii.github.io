@@ -182,10 +182,10 @@
 
      
     .hero-desc {
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: var(--fainttext);
       max-width: 420px;
-      line-height: 1.9;
+      line-height: 3;
       letter-spacing: 0.04em;
       margin-bottom: 2.5rem;
       opacity: 0;
@@ -600,13 +600,13 @@
           <div class="talk-links">
             <a href="https://www.youtube.com/watch?v=yKaCh9PA4yU" target="_blank">
               <span>FTSky 2025</span>
-              <em>conference talk</em>
+              <em>Beaming in FRBs</em>
             </a>
 
-            <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank">
+            <!-- <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank">
               <span>FRB 2025</span>
-              <em>conference talk</em>
-            </a>
+              <em>Beaming in FRBs</em>
+            </a> -->
           </div>
 
           <span class="project-arrow">view talks</span>
@@ -931,7 +931,7 @@
         if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
       }
  
-      const pulse = 1 + Math.sin(cursorT * 0.3) *  0.12;
+      const pulse = 1 + Math.sin(cursorT * 0.3) *  0.012;
       drawStar(cc, mouse.x, mouse.y, 1 * pulse, 0.95, 345);
        
       // cc.save();
