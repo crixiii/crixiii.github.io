@@ -908,6 +908,10 @@
     draw();
 
     // bkg
+    const bgCanvas = document.createElement('canvas');
+    bgCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;';
+    document.body.insertBefore(bgCanvas, document.body.firstChild);
+    const bgCtx = bgCanvas.getContext('2d');
     function drawBg() {
       const W = document.documentElement.scrollWidth;
       const H = document.documentElement.scrollHeight;
@@ -996,6 +1000,8 @@
         ], 90, 145, 18, 46, W*0.09, 0.08);
       }
     }
+    drawBg();
+    window.addEventListener('resize', drawBg);
 
     // cursor
     const cursorCanvas = document.createElement('canvas');
