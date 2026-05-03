@@ -294,7 +294,7 @@
  
       .about-bio p { font-size: 0.9rem; color: var(--fainttext); line-height: 1.95; margin-bottom: 1rem; }
 
-      .about-stats { display: flex; flex-direction: column; gap: 1.2rem; }
+      .about-stats { display: flex; flex-direction: column; gap: 1.2rem; counter-reset: stat-counter;}
 
       .stat-card {
         background: rgba(255, 80, 120, 0.04);
@@ -302,6 +302,7 @@
         border-radius: 3px;
         padding: 1.1rem 1.3rem;
         transition: border-color 0.3s, background 0.3s;
+        counter-increment: stat-counter;
       }
  
     .stat-card:hover {
@@ -325,6 +326,14 @@
       color: var(--secondtext);
     }
 
+    .stat-card .stat-label::before {
+      content: counter(stat-counter, decimal-leading-zero) " ";
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      color: var(--accentfaint);
+      opacity: 0.45;
+      letter-spacing: 0.1em;
+    }
 
     /* intrests */
 
@@ -920,7 +929,7 @@
 
 
     // cursor trail
-    function drawStar(c, x, y, size, alpha, hue) {
+    function drawStar(c, x, y, size, alpha, hue, glow = false) {
       const spikes = 5;
       const outer  = size;
       const inner  = size * 0.38;
@@ -933,12 +942,12 @@
         const r     = i % 2 === 0 ? outer : inner;
         const angle = (i * Math.PI) / spikes;
         i === 0 ? c.moveTo(Math.cos(angle)*r, Math.sin(angle)*r)
-                : c.lineTo(Math.cos(angle)*r, Math.sin(angle)*r);
-      }
+                : c.lineTo(Math.cos(angle)*r, Math.sin(angle)*r);}
       c.closePath();
       c.fillStyle = `hsla(${hue},80%,92%,1)`;
-      c.shadowColor = `hsla(${hue},90%,80%,0.9)`;
-      c.shadowBlur  = size * 2.5;
+      if (glow) {
+        c.shadowColor = `hsla(${hue},90%,80%,0.9)`;
+        c.shadowBlur  = size * 2.5;}
       c.fill();
       c.restore();
     }
@@ -952,21 +961,22 @@
 
     function drawCursor() {
       cc.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
-      trail[trailHead] = { x: mouse.x, y: mouse.y };
-      trailHead = (trailHead + 1) % TRAIL_LEN;
+      // trail[trailHead] = { x: mouse.x, y: mouse.y };
+      // trailHead = (trailHead + 1) % TRAIL_LEN;
  
-      for (let i = 0; i < TRAIL_LEN; i++) {
-        const idx   = (trailHead + i) % TRAIL_LEN;
-        const pt    = trail[idx];
-        const frac  = i / TRAIL_LEN;
-        const alpha = frac * frac * 0.65;
-        const size  = 2.5 + frac * 5.5;
-        const hue   = 340 + frac * 30;  
-        if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
-      }
- 
-      const pulse = 1 + Math.sin(cursorT * 0.3) *  0.15;
-      drawStar(cc, mouse.x, mouse.y, 1 * pulse, 0.95, 345);
+      // for (let i = 0; i < TRAIL_LEN; i++) {
+      //   const idx   = (trailHead + i) % TRAIL_LEN;
+      //   const pt    = trail[idx];
+      //   const frac  = i / TRAIL_LEN;
+      //   const alpha = frac * frac * 0.65;
+      //   const size  = 2.5 + frac * 5.5;
+      //   const hue   = 340 + frac * 30;  
+      //   if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
+      // }
+      
+      if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue, false);
+      const pulse = 1 + Math.sin(cursorT * 0.3) * 0.15;
+      drawStar(cc, mouse.x, mouse.y, 1 * pulse, 0.95, 345, true);
 
       cursorT += 0.06;
       requestAnimationFrame(drawCursor);
@@ -1013,21 +1023,23 @@
     );
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  const phrases = [
-    'astronomer',
-    // 'transient hunter',
-  ];
-  let phraseIdx = 0, charIdx = 0, deleting = false;
-  const typeEl = document.getElementById('typewriter');
-  function tick() {
-    const current = phrases[phraseIdx];
-    typeEl.textContent = deleting ? current.slice(0, charIdx--) : current.slice(0, charIdx++);
-    let delay = deleting ? 55 : 95;
-    if (!deleting && charIdx > current.length) { delay = 1600; deleting = true; }
-    else if (deleting && charIdx < 0) { deleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; delay = 400; }
-    setTimeout(tick, delay);
-  }
-  tick();
+
+    // cute but clunky 
+  // const phrases = [
+  //   'astronomer',
+  //   // 'transient hunter',
+  // ];
+  // let phraseIdx = 0, charIdx = 0, deleting = false;
+  // const typeEl = document.getElementById('typewriter');
+  // function tick() {
+  //   const current = phrases[phraseIdx];
+  //   typeEl.textContent = deleting ? current.slice(0, charIdx--) : current.slice(0, charIdx++);
+  //   let delay = deleting ? 55 : 95;
+  //   if (!deleting && charIdx > current.length) { delay = 1600; deleting = true; }
+  //   else if (deleting && charIdx < 0) { deleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; delay = 400; }
+  //   setTimeout(tick, delay);
+  // }
+  // tick();
 
  </script>
 
