@@ -20,6 +20,7 @@
         --normred: #2d0010;
         --redglow:#4a0000;
         --accent: #f0aea8;
+        --accenttwo: #dfd5ff;
         --accentdim:#ad7c74;
         --accentfaint:#805050;
         --maintext:#fff0f4;
@@ -403,18 +404,42 @@
       50%       { opacity: 0; }
     }
 
-    .status-dot {
-      display: inline-block;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 6px var(--accent);
-      animation: pulse-dot 2s ease-in-out infinite;
-      margin-right: 6px;
-      vertical-align: middle;
-      position: relative;
-      top: -1px;
-    }
+    /* please dont turn out cringe */
+    .talk-links {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .project-card.open .talk-links {
+    max-height: 200px;
+  }
+
+  .status-dot {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--accenttwo); box-shadow: 0 0 6px var(--accenttwo);
+
+    clip-path: polygon(
+      50% 0%,
+      61% 35%,
+      98% 35%,
+      68% 57%,
+      79% 91%,
+      50% 70%,
+      21% 91%,
+      32% 57%,
+      2% 35%,
+      39% 35%
+    );
+
+    animation: pulse-dot 2s ease-in-out infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+    
+
     @keyframes pulse-dot {
       0%, 100% { opacity: 1;   box-shadow: 0 0 5px var(--accent); }
       50%       { opacity: 0.4; box-shadow: 0 0 12px var(--accent); }
@@ -525,15 +550,28 @@
           <span class="project-arrow">ADS →</span>
         </a> -->
  
-        <a class="project-card" href="#">
+        <!-- <a class="project-card" href="#">
           <p class="project-type">Conferences</p>
           <p class="project-name">links to past talks!</p>
           <p class="project-desc">
             put links here
           </p>
           <span class="project-arrow">view more</span>
-        </a>
- 
+        </a> -->
+        
+        <div class="project-card" onclick="this.classList.toggle('open')">
+          <p class="project-type"> Conferences </p>
+          <p class="project-name"> Links to past talks! </p> 
+
+          <div class="'talk-links">
+            <a href="https://www.youtube.com/watch?v=yKaCh9PA4yU" target="_blank"> FTSky 2025 </a>
+            <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank"> FRB 2025</a>
+
+          </div>
+
+        </div>
+
+
       </div>
     </div>
   </section>
