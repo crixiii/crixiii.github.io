@@ -81,14 +81,18 @@
         border-bottom: 1px solid rgba(255, 80, 120, 0.08);
         transition: 0.2s;
       }
-
       .nav-logo {
-        font-family: 'Figtree', sans-serif;
         font-style: italic;
         font-size: 1.2rem;
         font-weight: 400;
-        color: var(--accentcolour);
-        text-decoration: none;letter-spacing: 0.05em;
+        color: var(--accent);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        transition: color 0.25s, text-shadow 0.25s;
+      }
+      .nav-logo:hover {
+        color: var(--maintext);
+        text-shadow: 0 0 18px rgba(255, 80, 120, 0.5);
       }
 
       .nav-links {
@@ -382,6 +386,25 @@
       .cv-detail { font-size: 0.82rem; color: var(--fainttext); line-height: 2.0; }
       .cv-download { margin-top: 2.5rem; }
 
+      .cv-entry {
+        counter-increment: cv-counter;
+      }
+
+      .cv-timeline {
+        counter-reset: cv-counter;
+      }
+
+      .cv-entry .cv-year::before {
+        content: counter(cv-counter, decimal-leading-zero) " ";
+        font-family: 'Courier New', monospace;
+        font-size: 8px;
+        color: var(--accentfaint);
+        opacity: 0.45;
+        display: inline;
+        letter-spacing: 0.1em;
+        /* margin-bottom: 0.4rem; */
+      }
+
       #cv .section-inner {
         max-width: none;
         width: 100%;
@@ -499,6 +522,9 @@
   <section id="hero">
     <p class="eyebrow"> MSc Astrophysics Student </p>
     <h1> clarinda montilla </h1>
+    <p class="hero-role">
+      <span id="typewriter"></span><span class="type-cursor">|</span>
+    </p>
     <!-- watch this space ?????? :o -->
     <div class="cta-row">
       <a class="btn btn-primary" href="#projects">my work</a>
@@ -532,6 +558,10 @@
           </div> -->
         </div>
         <div class="about-stats">
+          <div class="stat-card">
+          <p class="stat-label">Currently working on</p>
+          <p class="stat-value">...</p>
+        </div>
           <div class="stat-card">
             <p class="stat-label">Institution</p>
             <p class="stat-value">University of Canterbury</p>
@@ -659,10 +689,11 @@
 
   <footer>
     <p>
-      &copy; 2026  &nbsp;·&nbsp;
+      &copy; 2026 &nbsp;·&nbsp;
       <a href="mailto:clarinda.montilla@pg.canterbury.ac.nz">Email</a> &nbsp;·&nbsp;
       <a href="https://github.com/crixiii" target="_blank">GitHub</a> &nbsp;·&nbsp;
       <a href="https://orcid.org/0009-0008-4935-069X" target="_blank">ORCID</a>
+      &nbsp;·&nbsp; updated may 2026
     </p>
   </footer>
  
@@ -931,21 +962,10 @@
         if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
       }
  
-      const pulse = 1 + Math.sin(cursorT * 0.3) *  0.09;
+      const pulse = 1 + Math.sin(cursorT * 0.3) *  0.15;
       drawStar(cc, mouse.x, mouse.y, 1 * pulse, 0.95, 345);
-       
-      // cc.save();
-      // cc.globalAlpha = 0.35;
-      // cc.strokeStyle = 'rgba(255,180,200,0.7)';
-      // cc.lineWidth = 0.8;
-      // const arm = 15;
-      // cc.beginPath();
-      // cc.moveTo(mouse.x - arm, mouse.y); cc.lineTo(mouse.x + arm, mouse.y);
-      // cc.moveTo(mouse.x, mouse.y - arm); cc.lineTo(mouse.x, mouse.y + arm);
-      // cc.stroke();
-      // cc.restore();
- 
-      cursorT += 0.02;
+
+      cursorT += 0.06;
       requestAnimationFrame(drawCursor);
     }
     drawCursor();
@@ -990,7 +1010,22 @@
     );
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-
+  const phrases = [
+    'astronomer',
+    'transient hunter',
+    'grb chaser',
+  ];
+  let phraseIdx = 0, charIdx = 0, deleting = false;
+  const typeEl = document.getElementById('typewriter');
+  function tick() {
+    const current = phrases[phraseIdx];
+    typeEl.textContent = deleting ? current.slice(0, charIdx--) : current.slice(0, charIdx++);
+    let delay = deleting ? 55 : 95;
+    if (!deleting && charIdx > current.length) { delay = 1600; deleting = true; }
+    else if (deleting && charIdx < 0) { deleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; delay = 400; }
+    setTimeout(tick, delay);
+  }
+  tick();
 
  </script>
 
