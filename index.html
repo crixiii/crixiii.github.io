@@ -795,19 +795,19 @@
         if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
       }
  
-      const pulse = 1 + Math.sin(cursorT * 0.3) * 12;
+      const pulse = 1 + Math.sin(cursorT * 0.3) *  0.12;
       drawStar(cc, mouse.x, mouse.y, 1 * pulse, 0.95, 345);
        
-      cc.save();
-      cc.globalAlpha = 0.35;
-      cc.strokeStyle = 'rgba(255,180,200,0.7)';
-      cc.lineWidth = 0.8;
-      const arm = 15;
-      cc.beginPath();
-      cc.moveTo(mouse.x - arm, mouse.y); cc.lineTo(mouse.x + arm, mouse.y);
-      cc.moveTo(mouse.x, mouse.y - arm); cc.lineTo(mouse.x, mouse.y + arm);
-      cc.stroke();
-      cc.restore();
+      // cc.save();
+      // cc.globalAlpha = 0.35;
+      // cc.strokeStyle = 'rgba(255,180,200,0.7)';
+      // cc.lineWidth = 0.8;
+      // const arm = 15;
+      // cc.beginPath();
+      // cc.moveTo(mouse.x - arm, mouse.y); cc.lineTo(mouse.x + arm, mouse.y);
+      // cc.moveTo(mouse.x, mouse.y - arm); cc.lineTo(mouse.x, mouse.y + arm);
+      // cc.stroke();
+      // cc.restore();
  
       cursorT += 0.02;
       requestAnimationFrame(drawCursor);
