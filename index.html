@@ -443,10 +443,11 @@
       .reveal.visible { opacity: 1; transform: none; }
 
     /* cute stuff */
-    .type-cursor {
+    
+    /* .type-cursor {
       color: var(--accent);
       animation: blink 6s step-end infinite;
-    }
+    } */
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50%       { opacity: 0; }
@@ -600,8 +601,8 @@
       <div class="projects-grid">
  
         <a class="project-card" href="#">
-          <p class="project-type"><span class="status-dot"></span>Research ✦ Ongoing</p>
-          <p class="project-name">frb</p>
+          <p class="project-type"><span class="status-dot"></span>Research</p>
+          <p class="project-name">grb</p>
           <p class="project-desc">
             description
           </p>
@@ -609,8 +610,8 @@
         </a>
  
         <a class="project-card" href="#">
-          <p class="project-type"><span class="status-dot"></span>Research ✦ Ongoing</p>
-          <p class="project-name">grb</p>
+          <p class="project-type"><span class="status-dot"></span>Publications</p>
+          <p class="project-name"> ???title</p>
           <p class="project-desc">
             description
           </p>
@@ -961,22 +962,22 @@
 
     function drawCursor() {
       cc.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
-      // trail[trailHead] = { x: mouse.x, y: mouse.y };
-      // trailHead = (trailHead + 1) % TRAIL_LEN;
+      trail[trailHead] = { x: mouse.x, y: mouse.y };
+      trailHead = (trailHead + 1) % TRAIL_LEN;
  
-      // for (let i = 0; i < TRAIL_LEN; i++) {
-      //   const idx   = (trailHead + i) % TRAIL_LEN;
-      //   const pt    = trail[idx];
-      //   const frac  = i / TRAIL_LEN;
-      //   const alpha = frac * frac * 0.65;
-      //   const size  = 2.5 + frac * 5.5;
-      //   const hue   = 340 + frac * 30;  
-      //   if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
-      // }
+      for (let i = 0; i < TRAIL_LEN; i++) {
+        const idx   = (trailHead + i) % TRAIL_LEN;
+        const pt    = trail[idx];
+        const frac  = i / TRAIL_LEN;
+        const alpha = frac * frac * 0.65;
+        const size  = 2.5 + frac * 5.5;
+        const hue   = 340 + frac * 30;  
+        if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
+      }
       
-      if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue, false);
+      // if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue, false);
       const pulse = 1 + Math.sin(cursorT * 0.3) * 0.15;
-      drawStar(cc, mouse.x, mouse.y, 1 * pulse, 0.95, 345, true);
+      drawStar(cc, mouse.x, mouse.y, 8 * pulse, 0.95, 345, true);
 
       cursorT += 0.06;
       requestAnimationFrame(drawCursor);
