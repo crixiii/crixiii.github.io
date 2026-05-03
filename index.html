@@ -54,7 +54,15 @@
         z-index: 0;
       }
 
-      .bg-gradient { display: none; }
+      .bg-gradient {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, #0a0005, #26040b);
+      z-index: 0;
+      pointer-events: none;
+      }
       
 
 
@@ -908,100 +916,7 @@
     draw();
 
     // bkg
-    const bgCanvas = document.createElement('canvas');
-    bgCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;';
-    document.body.insertBefore(bgCanvas, document.body.firstChild);
-    const bgCtx = bgCanvas.getContext('2d');
-    function drawBg() {
-      const W = document.documentElement.scrollWidth;
-      const H = document.documentElement.scrollHeight;
-      bgCanvas.width = W; bgCanvas.height = H;
-
-      bgCtx.fillStyle = '#100005';
-      bgCtx.fillRect(0, 0, W, H);
-
-      function cr(pts, t) {
-        const n = pts.length - 1;
-        const fi = Math.min(t * n, n - 0.001);
-        const i = Math.floor(fi), lt = fi - i;
-        const p0 = pts[Math.max(i-1,0)], p1 = pts[i];
-        const p2 = pts[Math.min(i+1,n)], p3 = pts[Math.min(i+2,n)];
-        const t2 = lt*lt, t3 = t2*lt;
-        return {
-          x: 0.5*((2*p1.x)+(-p0.x+p2.x)*lt+(2*p0.x-5*p1.x+4*p2.x-p3.x)*t2+(-p0.x+3*p1.x-3*p2.x+p3.x)*t3),
-          y: 0.5*((2*p1.y)+(-p0.y+p2.y)*lt+(2*p0.y-5*p1.y+4*p2.y-p3.y)*t2+(-p0.y+3*p1.y-3*p2.y+p3.y)*t3),
-        };
-      }
-
-      function blob(x, y, r, ri, gi, bi, a) {
-        if (x + r < 0 || x - r > W || y + r < 0 || y - r > H) return;
-        const g = bgCtx.createRadialGradient(x, y, 0, x, y, r);
-        g.addColorStop(0,    `rgba(${ri},${gi},${bi},${a})`);
-        g.addColorStop(0.5,  `rgba(${ri},${gi},${bi},${a*0.2})`);
-        g.addColorStop(1,    `rgba(${ri},${gi},${bi},0)`);
-        bgCtx.beginPath(); bgCtx.arc(x, y, r, 0, Math.PI*2);
-        bgCtx.fillStyle = g; bgCtx.fill();
-      }
-
-      
-      const baseH = H / W; 
-      blob(W*0.20, H*0.10, W*0.55, 160, 20, 50, 0.06);
-      blob(W*0.75, H*0.08, W*0.45, 120, 15, 40, 0.05);
-      blob(W*0.50, H*0.40, W*0.60, 140, 18, 45, 0.04);
-      blob(W*0.20, H*0.70, W*0.50, 150, 20, 50, 0.05);
-      blob(W*0.80, H*0.75, W*0.45, 130, 15, 42, 0.05);
-      blob(W*0.50, H*1.10, W*0.58, 145, 18, 48, 0.04);
-      blob(W*0.25, H*1.40, W*0.52, 155, 20, 52, 0.05);
-      blob(W*0.75, H*1.60, W*0.48, 135, 16, 44, 0.04);
-
-      function arm(pts, steps, ri, gi, bi, maxR, maxA) {
-        for (let s = 0; s <= steps; s++) {
-          const t = s / steps;
-          const p = cr(pts, t);
-          const env = Math.sin(t * Math.PI);
-          
-          const r = maxR * (0.3 + 0.5*env) * (0.6 + 0.6*Math.random());
-          const a = maxA * (0.2 + 0.5*env) * (0.4 + 0.6*Math.random());
-          const jit = (Math.random()-0.5) * r * 0.6;
-          const jit2 = (Math.random()-0.5) * r * 0.6;
-          blob(p.x*W + jit, p.y*H + jit2, r, ri, gi, bi, a);
-        }
-      }
-
-     
-      const tiles = Math.ceil(H / window.innerHeight);
-      for (let tile = 0; tile < tiles; tile++) {
-        const oy = tile / tiles; 
-
-        arm([
-          {x:0.05, y:oy+0.02/tiles}, {x:0.22, y:oy+0.10/tiles},
-          {x:0.40, y:oy+0.20/tiles}, {x:0.52, y:oy+0.35/tiles},
-          {x:0.46, y:oy+0.50/tiles}, {x:0.30, y:oy+0.62/tiles},
-          {x:0.38, y:oy+0.78/tiles}, {x:0.55, y:oy+0.95/tiles},
-        ], 120, 170, 22, 55, W*0.10, 0.10);
-
-        arm([
-          {x:0.95, y:oy+0.04/tiles}, {x:0.76, y:oy+0.14/tiles},
-          {x:0.60, y:oy+0.26/tiles}, {x:0.50, y:oy+0.40/tiles},
-          {x:0.56, y:oy+0.54/tiles}, {x:0.68, y:oy+0.68/tiles},
-          {x:0.60, y:oy+0.85/tiles},
-        ], 100, 135, 18, 42, W*0.09, 0.09);
-
-        arm([
-          {x:0.30, y:oy+0.08/tiles}, {x:0.42, y:oy+0.22/tiles},
-          {x:0.47, y:oy+0.36/tiles}, {x:0.40, y:oy+0.50/tiles},
-          {x:0.50, y:oy+0.64/tiles}, {x:0.58, y:oy+0.78/tiles},
-        ], 80, 155, 20, 50, W*0.07, 0.07);
-
-        arm([
-          {x:0.12, y:oy+0.92/tiles}, {x:0.28, y:oy+0.78/tiles},
-          {x:0.46, y:oy+0.68/tiles}, {x:0.60, y:oy+0.76/tiles},
-          {x:0.78, y:oy+0.88/tiles}, {x:0.92, y:oy+0.96/tiles},
-        ], 90, 145, 18, 46, W*0.09, 0.08);
-      }
-    }
-    drawBg();
-    window.addEventListener('resize', drawBg);
+    
 
     // cursor
     const cursorCanvas = document.createElement('canvas');
