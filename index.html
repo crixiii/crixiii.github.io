@@ -634,10 +634,30 @@
       });
     }
 
-    setTimeout(() => {
-      launchSupernova();
-      setInterval(launchSupernova, 7000 + Math.random() * 7000);
-    }, 4000);
+    // setTimeout(() => {
+    //   launchSupernova();
+    //   setInterval(launchSupernova, 7000 + Math.random() * 7000);
+    // }, 4000);
+
+    let supernovaInterval = null;
+
+    function startSupernovaLoop() {
+      if (supernovaInterval) return;
+
+      supernovaInterval = setInterval(() => {
+        launchSupernova();
+      }, 7000 + Math.random() * 7000);
+    }
+
+    function stopSupernovaLoop() {
+      clearInterval(supernovaInterval);
+      supernovaInterval = null;
+    }
+    setTimeout(startSupernovaLoop, 4000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {stopSupernovaLoop();
+      } else {startSupernovaLoop();}
+    });
 
     // 
 
