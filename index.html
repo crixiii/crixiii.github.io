@@ -370,7 +370,7 @@
       .cv-timeline {position: relative;}
 
       .cv-timeline::before {content: '';
-        position: absolute;left: 110px;
+        position: absolute;left: 140px;
         top: 0;bottom: 0;
         width: 1px;background: rgba(255,80,120,0.08);
       }
@@ -382,7 +382,12 @@
       .cv-detail { font-size: 0.82rem; color: var(--fainttext); line-height: 1.75; }
       .cv-download { margin-top: 2.5rem; }
 
-      #cv .section-inner {max-width: 1400px;}
+      #cv .section-inner {
+        max-width: none;
+        width: 100%;
+        margin: 0;
+        padding: 7rem 4rem; 
+      }
 
       footer {
         position: relative; z-index: 10;
