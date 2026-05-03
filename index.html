@@ -367,7 +367,13 @@
       .project-arrow { display: inline-block; margin-top: 1rem; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--fainttext); transition: color 0.25s; }
       .project-card:hover .project-arrow { color: var(--accent); }
 
-      .cv-timeline { display: flex; flex-direction: column; gap: 0; }
+      .cv-timeline {position: relative;}
+
+      .cv-timeline::before {content: '';
+        position: absolute;left: 110px;
+        top: 0;bottom: 0;
+        width: 1px;background: rgba(255,80,120,0.08);
+      }
       .cv-entry { display: grid; grid-template-columns: 110px 1fr; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid rgba(255,80,120,0.07); }
       .cv-entry:first-child { border-top: 1px solid rgba(255,80,120,0.07); }
       .cv-year { font-size: 10px; letter-spacing: 0.2em; color: var(--accentfaint); padding-top: 0.2rem; text-align: right; text-transform: uppercase; }
@@ -406,39 +412,60 @@
 
     /* please dont turn out cringe */
     .talk-links {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
+      max-height: 0;
+      overflow: hidden;
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: max-height 0.35s ease;
+    }
 
-  .project-card.open .talk-links {
-    max-height: 200px;
-  }
+    .project-card.open .talk-links {max-height: 200px;}
 
-  .status-dot {
-    display: inline-block; width: 8px; height: 8px;
-    background: var(--accenttwo); box-shadow: 0 0 6px var(--accenttwo);
+    .talk-links a {
+    text-decoration: none;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid rgba(255,80,120,0.12);
+    background: rgba(255,80,120,0.03);
+    border-radius: 2px;display: flex;
+    flex-direction: column;transition: all 0.25s ease;}
+    .talk-links span {font-size: 0.8rem;
+      color: var(--secondtext);}
 
-    clip-path: polygon(
-      50% 0%,
-      61% 35%,
-      98% 35%,
-      68% 57%,
-      79% 91%,
-      50% 70%,
-      21% 91%,
-      32% 57%,
-      2% 35%,
-      39% 35%
-    );
+    .talk-links em {font-size: 0.65rem;
+      font-style: normal;letter-spacing: 0.08em;
+      color: var(--accentfaint);}
 
-    animation: pulse-dot 2s ease-in-out infinite;
-    margin-right: 6px;
-    vertical-align: middle;
-    position: relative;
-    top: -1px;
-  }
-    
+    .talk-links a:hover {border-color: var(--borderhover);
+      background: rgba(255,80,120,0.08);transform: translateX(3px);}
+
+
+
+    .status-dot {
+      display: inline-block; width: 8px; height: 8px;
+      background: var(--accenttwo); box-shadow: 0 0 6px var(--accenttwo);
+
+      clip-path: polygon(
+        50% 0%,
+        61% 35%,
+        98% 35%,
+        68% 57%,
+        79% 91%,
+        50% 70%,
+        21% 91%,
+        32% 57%,
+        2% 35%,
+        39% 35%
+      );
+
+      animation: pulse-dot 2s ease-in-out infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+      
 
     @keyframes pulse-dot {
       0%, 100% { opacity: 1;   box-shadow: 0 0 5px var(--accent); }
@@ -558,19 +585,51 @@
           </p>
           <span class="project-arrow">view more</span>
         </a> -->
-        
-        <div class="project-card" onclick="this.classList.toggle('open')">
-          <p class="project-type"> Conferences </p>
-          <p class="project-name"> Links to past talks! </p> 
+                
+        <div class="project-card talks" onclick="this.classList.toggle('open')">
+          <p class="project-type">Conferences</p>
+          <p class="project-name">Talks & presentations</p>
 
-          <div class="'talk-links">
-            <a href="https://www.youtube.com/watch?v=yKaCh9PA4yU" target="_blank"> FTSky 2025 </a>
-            <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank"> FRB 2025</a>
+          <div class="talk-links">
+            <a href="https://www.youtube.com/watch?v=yKaCh9PA4yU" target="_blank">
+              <span>FTSky 2025</span>
+              <em>conference talk</em>
+            </a>
 
+            <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank">
+              <span>FRB 2025</span>
+              <em>conference talk</em>
+            </a>
           </div>
 
+          <span class="project-arrow">view talks</span>
         </div>
 
+        <div class="cv-timeline"> 
+           <div class="cv-entry"> 
+            <div class="cv-year">March 2025 — April 2026</div> 
+            <div> <p class="cv-title">MSc in Astronomy</p> 
+              <p class="cv-place">University of Canterbury</p> 
+              <p class="cv-detail"> Thesis: <em>“The Need for Speed: Modelling Fast Transients”</em>
+                <br> Supervisors: Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler, Assoc. Prof. Michael Albrow
+                <br> Focus: GRBs, FRBs, time-domain astronomy, simulations </p> 
+              </div> 
+            </div> 
+            <div class="cv-entry">
+               <div class="cv-year">2024</div> 
+               <div> <p class="cv-title">BSc with Honours in Astronomy </p>
+                 <p class="cv-place">University of Canterbury</p> 
+                 <p class="cv-detail"> First Class Honours
+                  <br> Supervisor: Dr. Ryan Ridden-Harper</p> 
+                  </div> 
+               </div> 
+            <div class="cv-entry">
+              <div class="cv-year"> 2021-2023</div>
+              <div> 
+                <p class="cv-title"> BSc in Mathematics and Physics </p>
+                <p class="cv-place">University of Canterbury</p> 
+              </div>
+            </div>
 
       </div>
     </div>
