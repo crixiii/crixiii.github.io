@@ -284,7 +284,11 @@
       }
  
     /* about me */
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .about-grid { display: grid; grid-template-columns: auto 1fr 1fr; gap: 3rem; align-items: start; }
+
+
+    .about-pfp {width: 140px;height: 140px;object-fit: cover;
+      border-radius: 50%;border: 1px solid var(--border);flex-shrink: 0;}
  
     @media (max-width: 640px) {
       .about-grid { grid-template-columns: 1fr; }
@@ -549,6 +553,7 @@
       
       <div class="section-divider"></div>
       <div class="about-grid">
+        <img src="imgs/pfp.jpg" alt="Clarinda Montilla" class="about-pfp" />
         <!-- <div class="about-bio"> -->
           <!-- <p> -->
             <!-- :D -->
