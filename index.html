@@ -383,18 +383,19 @@
       .cv-timeline {position: relative;}
         /* counter-reset: cv-counter;} */
 
-      .cv-timeline::before {content: '';
+      /* .cv-timeline::before {content: '';
         position: absolute;left: 140px;
         top: 0;bottom: 0;
         width: 1px;background: rgba(255,80,120,0.08);
-      }
-      .cv-entry {display: grid;grid-template-columns: 140px 1fr;
-        gap: 3rem;padding: 2.2rem 0;border-bottom: 1px solid rgba(255,80,120,0.07);
+      } */
+      .cv-entry {display: grid;grid: 140px 1fr;
+        gap: 3rem;padding: 2.2rem 0;
+        /* border-bottom: 1px solid rgba(255,80,120,0.07); */
         /* counter-increment: cv-counter; */
       }
 
-      .cv-entry:first-child { border-top: 1px solid rgba(255,80,120,0.07); }
-      .cv-year { font-size: 10px; letter-spacing: 0.2em; color: var(--accentfaint); padding-top: 0.2rem; text-align: right; text-transform: uppercase; }
+      /* .cv-entry:first-child { border-top: 1px solid rgba(255,80,120,0.07); } */
+      .cv-year { font-size: 0.75rem; letter-spacing: 0.15em; color: var(--accentfaint); padding-top: 0.2rem; text-align: right; text-transform: uppercase; white-space: nowrap; }
       .cv-title { font-size: 1rem; font-weight: 400; color: var(--secondtext); margin-bottom: 0.5rem; }
       .cv-place { font-size: 0.78rem; color: var(--accentdim); letter-spacing: 0.08em; margin-bottom: 0.7rem; }
       .cv-detail { font-size: 0.82rem; color: var(--fainttext); line-height: 2.0; }
@@ -571,8 +572,8 @@
             <p class="stat-value">University of Canterbury</p>
           </div>
           <div class="stat-card">
-            <p class="stat-label">Supervisor</p>
-            <p class="stat-value">--</p>
+            <p class="stat-label">Current Supervisors</p>
+            <p class="stat-value">Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler, Assoc. Prof. Michael Albrow</p>
           </div>
           <!-- <div class="stat-card">
             <p class="stat-label">Contact</p>
@@ -619,7 +620,7 @@
         <!--  -->
 
         <div class="project-card">
-          <p class="project-type">Conferences</p>
+          <p class="project-type">Conference Talks</p>
           <div class="publication-list">
             <div class="talk-item">
               <em>Beaming in FRBs</em>
