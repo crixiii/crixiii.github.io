@@ -449,6 +449,17 @@
       .talk-venues {display: flex;gap: 8px;}
       .journal-badge.older {opacity: 0.5;}
 
+      .publication-list {display: flex;flex-direction: column;gap: 10px;margin-top: 8px;}
+      .publication-item {display: flex;
+        align-items: center;gap: 10px;text-decoration: none;color: var(--secondtext);
+        font-size: 0.85rem;transition: color 0.25s;}
+
+      .publication-item:hover { color: var(--accent); }
+
+      .journal-badge {background: var(--darkred);color: var(--accenttwo);
+        border: 1px solid rgba(255, 120, 120, 0.35);border-radius: 3px;
+        padding: 2px 8px;font-size: 0.7rem;letter-spacing: 0.1em;white-space: nowrap;}
+
 
 
     /* .type-cursor {
@@ -473,13 +484,23 @@
 
     .project-card.open .talk-links {max-height: 200px;}
 
-    .talk-links a {
-    text-decoration: none;
-    padding: 0.6rem 0.7rem;
-    border: 1px solid rgba(255,80,120,0.12);
-    background: rgba(255,80,120,0.03);
-    border-radius: 2px;display: flex;
-    flex-direction: column;transition: all 0.25s ease;}
+    .talk-links a {text-decoration: none;color: inherit;}
+
+    .talk-item {display: flex;align-items: center;
+      justify-content: space-between;
+      gap: 12px;padding: 0.6rem 0.7rem;
+      border: 1px solid rgba(255,80,120,0.12);
+      background: rgba(255,80,120,0.03);
+      border-radius: 2px;transition: all 0.25s ease;}
+
+    .talk-item:hover {border-color: var(--borderhover);
+      background: rgba(255,80,120,0.08);transform: translateX(3px);}
+
+    .talk-item em {font-size: 0.82rem;font-style: normal;color: var(--secondtext);}
+
+    .talk-venues {display: flex;gap: 8px;}
+
+
     .talk-links span {font-size: 0.8rem;
       color: var(--secondtext);}
 
@@ -491,23 +512,17 @@
       background: rgba(255,80,120,0.08);transform: translateX(3px);}
 
 
-
+    /* star shaped status dot */
     .status-dot {
       display: inline-block; width: 8px; height: 8px;
       background: var(--accenttwo); box-shadow: 0 0 6px var(--accenttwo);
 
-      clip-path: polygon(
-        50% 0%,
-        61% 35%,
-        98% 35%,
-        68% 57%,
-        79% 91%,
-        50% 70%,
-        21% 91%,
-        32% 57%,
-        2% 35%,
-        39% 35%
-      );
+      clip-path: polygon(50% 0%,
+        61% 35%, 98% 35%,
+        68% 57%, 79% 91%,
+        50% 70%, 21% 91%,
+        32% 57%, 2% 35%,
+        39% 35% );
 
       animation: pulse-dot 2s ease-in-out infinite;
       margin-right: 6px;
@@ -516,7 +531,6 @@
       top: -1px;
     }
       
-
     @keyframes pulse-dot {
       0%, 100% { opacity: 1;   box-shadow: 0 0 5px var(--accent); }
       50%       { opacity: 0.4; box-shadow: 0 0 12px var(--accent); }
@@ -531,7 +545,7 @@
   <canvas id="starfield"></canvas>
  
   <nav>
-    <a class="nav-logo" href="#hero">crixiii</a>
+    <a class="nav-logo" href="#hero">@crixiii</a>
     <ul class="nav-links">
       <li><a href="#about">about</a></li>
       <li><a href="#projects">my work</a></li>
@@ -542,9 +556,7 @@
   <section id="hero">
     <p class="eyebrow"> MSc Astrophysics Student </p>
     <h1> Clarinda Montilla </h1>
-    <p class="hero-role">
-      <!-- <span id="typewriter"></span><span class="type-cursor">|</span> -->
-    </p>
+    
     <!-- watch this space ?????? :o -->
     <div class="cta-row">
       <a class="btn btn-primary" href="#projects">my work</a>
@@ -560,13 +572,13 @@
       
       <div class="section-divider"></div>
       <div class="about-grid">
-        <div class="about-bio">
-          <p>
-            :D
-          </p>
-          <p>
-            coming soon!
-          </p>
+        <!-- <div class="about-bio"> -->
+          <!-- <p> -->
+            <!-- :D -->
+          <!-- </p> -->
+          <!-- <p> -->
+            <!-- coming soon! -->
+          <!-- </p> -->
           
           <!-- <div class="tags">
             <span class="tag">Supernovae</span>
@@ -576,7 +588,7 @@
             <span class="tag">Spectroscopy</span>
             <span class="tag">Survey Science</span>
           </div> -->
-        </div>
+        <!-- </div> -->
         <div class="about-stats">
           <div class="stat-card">
             <p class="stat-label">Institution</p>
@@ -649,8 +661,6 @@
           <span class="project-arrow">view talks</span>
         </div>
 
-          <span class="project-arrow">view talks</span>
-        </div>
 
       </div>
     </div>
@@ -696,7 +706,7 @@
 
       </div>
     </div>
-
+  <section>
   <footer>
     <p>
       &copy; 2026 &nbsp;·&nbsp;
