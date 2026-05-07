@@ -296,14 +296,11 @@
       height: 140px;
       object-fit: cover;
       border-radius: 50%;
-      border: 1px solid rgba(255, 80, 120, 0.3);
-      animation: pfp-pulse 3s ease-in-out infinite;
+      border: 1px solid rgba(163, 120, 255, 0.35);
+      box-shadow: 0 0 10px rgba(163, 120, 255, 0.3),
+                  0 0 25px rgba(163, 120, 255, 0.15),
+                  0 0 8px rgba(255, 95, 80, 0.2) inset;
       flex-shrink: 0;
-    }
-
-    @keyframes pfp-pulse {
-      0%, 100% { box-shadow: 0 0 10px rgba(255,80,120,0.2), 0 0 25px rgba(163,120,255,0.1); }
-      50%       { box-shadow: 0 0 20px rgba(255,80,120,0.4), 0 0 50px rgba(163,120,255,0.2); }
     }
 
     @media (max-width: 640px) {
@@ -323,10 +320,10 @@
         opacity: 0.45;
         letter-spacing: 0.1em;
       }
-      .about-stats { display: flex; flex-direction: column; gap: 1.2rem;}
+      .about-stats { display: flex; flex-direction: row; gap: 1.2rem;}
 
-      .stat-card {
-        background: rgba(255, 80, 120, 0.04);
+      .stat-card {flex:1;
+        background: rgba(255, 100, 80, 0.04);
         border: 1px solid var(--border);
         border-radius: 3px;
         padding: 1.1rem 1.3rem;
