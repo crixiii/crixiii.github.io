@@ -472,30 +472,6 @@
     }
 
     /*  */
-    .talk-links {
-      max-height: 0;
-      overflow: hidden;
-      margin-top: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      transition: max-height 0.35s ease;
-    }
-
-    .project-card.open .talk-links {max-height: 200px;}
-
-    .talk-links a {text-decoration: none;color: inherit;}
-
-    .talk-item {display: flex;align-items: center;
-      justify-content: space-between;
-      gap: 12px;padding: 0.6rem 0.7rem;
-      border: 1px solid rgba(255,80,120,0.12);
-      background: rgba(255,80,120,0.03);
-      border-radius: 2px;transition: all 0.25s ease;}
-
-    .talk-item:hover {border-color: var(--borderhover);
-      background: rgba(255,80,120,0.08);transform: translateX(3px);}
-
     .talk-item em {font-size: 0.82rem;font-style: normal;color: var(--secondtext);}
 
     .talk-venues {display: flex;gap: 8px;}
@@ -642,23 +618,17 @@
 
         <!--  -->
 
-        <div class="project-card talks" onclick="this.classList.toggle('open')">
+        <div class="project-card">
           <p class="project-type">Conferences</p>
-          <p class="project-name">Talks & Presentations</p>
-          <div class="talk-links">
+          <div class="publication-list">
             <div class="talk-item">
               <em>Beaming in FRBs</em>
               <div class="talk-venues">
-                <a href="https://www.youtube.com/watch?v=yKaCh9PA4yU" target="_blank" onclick="event.stopPropagation()">
-                  <span class="journal-badge">FTSky 2025</span>
-                </a>
-                <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank" onclick="event.stopPropagation()">
-                  <span class="journal-badge older">FRB 2025</span>
-                </a>
+                <a href="https://www.youtube.com/watch?v=yKaCh9PA4yU" target="_blank" class="journal-badge">FTSky 2025</a>
+                <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank" class="journal-badge older">FRB 2025</a>
               </div>
             </div>
           </div>
-          <span class="project-arrow">view talks</span>
         </div>
 
 
