@@ -286,10 +286,26 @@
     /* about me */
     .about-grid { display: grid; grid-template-columns: auto 1fr 1fr; gap: 3rem; align-items: start; }
 
-
-    .about-pfp {width: 140px;height: 140px;object-fit: cover;
-      border-radius: 50%;border: 1px solid var(--border);flex-shrink: 0;}
+/* old */
+    /* .about-pfp {width: 140px;height: 140px;object-fit: cover;
+      border-radius: 50%;border: 1px solid var(--border);flex-shrink: 0;} */
  
+      /* new pfp */
+    .about-pfp {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 80, 120, 0.3);
+      animation: pfp-pulse 3s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pfp-pulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(255,80,120,0.2), 0 0 25px rgba(163,120,255,0.1); }
+      50%       { box-shadow: 0 0 20px rgba(255,80,120,0.4), 0 0 50px rgba(163,120,255,0.2); }
+    }
+
     @media (max-width: 640px) {
       .about-grid { grid-template-columns: 1fr; }
       nav { padding: 1rem 1.5rem; }
@@ -578,7 +594,7 @@
           </div>
             <div class="stat-card">
               <p class="stat-label">Current Supervisors</p>
-              <p class="stat-value" style="font-weight: 300;">Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler, Assoc. Prof. Michael Albrow</p>
+              <p class="stat-value" style="font-weight: 200;">Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler, Assoc. Prof. Michael Albrow</p>
             </div>
           <!-- <div class="stat-card">
             <p class="stat-label">Contact</p>
