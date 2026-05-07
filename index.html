@@ -445,6 +445,11 @@
       .reveal.visible { opacity: 1; transform: none; }
 
     /* cute stuff */
+      .talk-item {display: flex;align-items: center;justify-content: space-between;gap: 12px;}
+      .talk-venues {display: flex;gap: 8px;}
+      .journal-badge.older {opacity: 0.5;}
+
+
 
     /* .type-cursor {
       color: var(--accent);
@@ -455,7 +460,7 @@
       50%       { opacity: 0; }
     }
 
-    /* please dont turn out cringe */
+    /*  */
     .talk-links {
       max-height: 0;
       overflow: hidden;
@@ -624,21 +629,25 @@
         </div>
 
         <!--  -->
+
         <div class="project-card talks" onclick="this.classList.toggle('open')">
           <p class="project-type">Conferences</p>
-          <p class="project-name">Talks & presentations</p>
-
+          <p class="project-name">Talks & Presentations</p>
           <div class="talk-links">
-            <a href="https://www.youtube.com/watch?v=yKaCh9PA4yU" target="_blank">
-              <span>FTSky 2025</span>
+            <div class="talk-item">
               <em>Beaming in FRBs</em>
-            </a>
-
-            <!-- <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank">
-              <span>FRB 2025</span>
-              <em>Beaming in FRBs</em>
-            </a> -->
+              <div class="talk-venues">
+                <a href="https://www.youtube.com/watch?v=yKaCh9PA4yU" target="_blank" onclick="event.stopPropagation()">
+                  <span class="journal-badge">FTSky 2025</span>
+                </a>
+                <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank" onclick="event.stopPropagation()">
+                  <span class="journal-badge older">FRB 2025</span>
+                </a>
+              </div>
+            </div>
           </div>
+          <span class="project-arrow">view talks</span>
+        </div>
 
           <span class="project-arrow">view talks</span>
         </div>
