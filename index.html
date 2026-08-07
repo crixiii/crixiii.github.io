@@ -9,535 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
-  
-    <style>
-      * { cursor: none !important; }
-      /* page setup- colours etc :D */
-      *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-      :root {
-        --darkestred:#100005;
-        --darkred:#1a0008;
-        --normred: #2d0010;
-        --redglow:#4a0000;
-        --accent: #f0aea8;
-        --accenttwo: #dfd5ff;
-        --accentdim:#ad7c74;
-        --accentfaint:#805050;
-        --maintext:#fff0f4;
-        --secondtext:#e8b8b8;
-        --fainttext:#aa7a7a;
-        --border: rgba(255, 92, 80, 0.12);
-        --borderhover:rgba(255, 89, 80, 0.3);
-      }
+  <!-- <link rel="stylesheet" href="style.css" /> -->
 
-
-      html { scroll-behavior: smooth; }
-
-      /* make a pretty bkg! */
-      body {
-        background: #100005;
-        color: var(--maintext);
-        font-family: 'Rubik', sans-serif;
-        font-weight: 325;
-        overflow-x: hidden;
-        position: relative;
-      }
-
-      /* idk what im doing yet */
-      #starfield {
-        position: absolute;
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
-        pointer-events: none;
-        z-index: 0;
-      }
-
-      .bg-gradient {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, #0a0005, #26040b);
-      z-index: 0;
-      pointer-events: none;
-      }
-      
-
-
-      /* navigation */
-      nav {
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        z-index: 100;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.4rem 3rem;
-        background: rgba(16, 0, 5, 0.55);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border-bottom: 1px solid rgba(255, 80, 120, 0.08);
-        transition: 0.2s;
-      }
-      .nav-logo {
-        font-style: italic;
-        font-size: 1.2rem;
-        font-weight: 400;
-        color: var(--accent);
-        text-decoration: none;
-        letter-spacing: 0.05em;
-        transition: color 0.25s, text-shadow 0.25s;
-      }
-      .nav-logo:hover {
-        color: var(--maintext);
-        text-shadow: 0 0 18px rgba(255, 80, 120, 0.5);
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 2.5rem;
-        list-style: none;
-      }
-
-      .nav-links a {
-        font-weight: 300;
-        font-size: 0.75rem;
-        letter-spacing: 0.25em;
-        text-transform: lowercase;
-        color: var(--accentfaint);
-        text-decoration: none;
-        position: relative;
-        transition: color 0.25s;
-      }
-
-      .nav-links a::after{
-        content: '';
-        position: absolute;
-        bottom: -3px;
-        left: 0;
-        width:0;
-        height: 1px;
-        background: var(--accentcolour);
-        transition: width 0.3s ease;
-    }
- 
-    .nav-links a:hover { color: var(--accentcolour); }
-    .nav-links a:hover::after { width: 100%; }
- 
-
-    section {
-      position: relative;
-      z-index: 10;
-    }
-
-
-    #hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-      padding: 6rem 2rem 4rem;
-    }
- 
-    .eyebrow {
-      font-weight: 200;
-      font-size: 10px;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--accentfaint);
-      margin-bottom: 1.6rem;
-      opacity: 0;
-      animation: fadeUp 1s ease 0.3s forwards;
-    }
-
-
-    
-    #hero h1 {
-      font-family: 'Rubik', sans-serif;
-      font-weight: 300;
-      font-size: clamp(3rem, 7vw, 5.5rem);
-      line-height: 1.07;
-      color: var(--maintext);
-      margin-bottom: 0.5rem;
-      opacity: 0;
-      animation: fadeUp 1s ease 0.5s forwards;
-    }
- 
-    #hero h1 em {
-      font-style: italic;
-      color: var(--accent);
-    }
- 
-    .hero-role {
-      font-family: 'Rubik', sans-serif;
-      font-style: italic;
-      font-size: clamp(1rem, 2.5vw, 1.2rem);
-      font-weight: 300;
-      color: var(--accentfaint);
-      margin-bottom: 1.6rem;
-      letter-spacing: 0.02em;
-      opacity: 0;
-      animation: fadeUp 1s ease 0.7s forwards;
-    }
-
-     
-    .hero-desc {
-      font-size: 0.9rem;
-      color: var(--fainttext);
-      max-width: 420px;
-      line-height: 1.9;
-      letter-spacing: 0.04em;
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: fadeUp 1s ease 0.9s forwards;
-    }
- 
-    .cta-row {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      opacity: 0;
-      animation: fadeUp 1s ease 1.1s forwards;
-    }
- 
-    .btn {
-      padding: 0.62rem 1.9rem;
-      border-radius: 2px;
-      font-family: 'Rubik', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.28s ease;
-      display: inline-block;
-    }
- 
-
-    .btn-primary {
-        background: rgba(255, 80, 120, 0.10);
-        border: 1px solid rgba(255, 80, 120, 0.40);
-        color: #f0a8c0;
-      }
-    .btn-primary:hover {
-        background: rgba(255, 80, 120, 0.22);
-        border-color: rgba(255, 80, 120, 0.75);
-        color: #ffd0e0;
-      }
-
-    .btn-ghost {
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--accentfaint);
-      }
-    .btn-ghost:hover {
-        border-color: rgba(255, 255, 255, 0.26);
-        color: var(--secondtext);
-      }
-
-    /*  */
-    
-    .section-inner {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 7rem 2rem;
-    }
- 
-    .section-inner + .section-inner {
-      border-top: 1px solid var(--border);
-    }
- 
-    .section-label {
-      font-weight: 200;
-      font-size: 10px;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--accentfaint);
-      margin-bottom: 1.4rem;
-    }
- 
-    .section-inner h2 {
-      font-family: 'Rubik', sans-serif;
-      font-weight: 300;
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      color: var(--secondtext);
-      margin-bottom: 1.5rem;
-      line-height: 1.2;
-    }
- 
-    .section-inner h2 em {
-      font-style: italic;
-      font-weight: 300;
-      color: var(--accent);
-    }
- 
-    .section-divider {
-        width: 32px; height: 1px;
-        background: rgba(255, 80, 120, 0.35);
-        margin-bottom: 2rem;
-      }
- 
-    /* about me */
-    .about-grid { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: start; }
-
-/* old */
-    /* .about-pfp {width: 140px;height: 140px;object-fit: cover;
-      border-radius: 50%;border: 1px solid var(--border);flex-shrink: 0;} */
- 
-      /* new pfp */
-    .about-pfp {
-      width: 180px;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 120, 120, 0.35);
-      box-shadow: 0 0 10px rgba(255, 120, 120, 0.3),
-                  0 0 25px rgba(255, 134, 120, 0.15),
-                  0 0 8px rgba(255, 95, 80, 0.2) inset;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 640px) {
-      .about-grid { grid-template-columns: 1fr; }
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { gap: 1.5rem; }
-    }
-    
-      .about-bio{counter-reset: bio-counter;}
-      .about-bio p { font-size: 0.9rem; color: var(--fainttext); line-height: 1.95; margin-bottom: 1rem; 
-        counter-increment: bio-counter;}
-      .about-bio p::before {
-        content: counter(bio-counter, decimal-leading-zero) " ";
-        font-family: 'Courier New', monospace;
-        font-size: 8px;
-        color: var(--accentfaint);
-        opacity: 0.45;
-        letter-spacing: 0.1em;
-      }
-      .about-stats { display: flex; flex-direction: row; gap: 1.2rem; flex-wrap: wrap; width: 100%;}
-
-      .stat-card {flex:1; min-width: 200px;
-        background: rgba(255, 100, 80, 0.04);
-        border: 1px solid var(--border);
-        border-radius: 3px;
-        padding: 1.1rem 1.3rem;
-        transition: border-color 0.3s, background 0.3s;
-      }
- 
-    .stat-card:hover {
-      border-color: var(--borderhover);background: rgba(255, 80, 120, 0.09);
-      box-shadow:0 0 12px rgba(255, 80, 120, 0.15),
-        0 0 30px rgba(255, 80, 120, 0.07),inset 0 0 12px rgba(255, 80, 120, 0.04);
-    }
- 
-    .stat-label {
-      font-size: 9px;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--accentfaint);
-      margin-bottom: 0.35rem;
-    }
- 
-    .stat-value {
-      font-family: 'Rubik', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 400;
-      color: var(--secondtext);
-    }
-
-
-    /* intrests */
-
-    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.4rem; }
-    .tag { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accentfaint); border: 1px solid rgba(255,80,120,0.2); border-radius: 2px; padding: 0.3rem 0.7rem; }
-
-
-    /* projects :D */
-    
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.2rem;
-      margin-top: 0.5rem;
-    }
- 
-      .project-card {
-        background: rgba(255, 80, 120, 0.03);
-        border: 1px solid var(--border);
-        border-radius: 3px;
-        padding: 1.6rem;
-        text-decoration: none;
-        display: block;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .project-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0; height: 1px;
-        background: linear-gradient(80deg, transparent, rgba(255,80,120,0.5), transparent);
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
-
-      .project-card:hover { border-color: var(--borderhover); background: rgba(255,80,120,0.07); transform: translateY(-2px); }
-      .project-card:hover::before { opacity: 1; }
-
-      .project-type { font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accentfaint); margin-bottom: 0.7rem; }
-      .project-name { font-size: 1.05rem; font-weight: 400; color: var(--secondtext); margin-bottom: 0.6rem; line-height: 1.3; }
-      .project-desc { font-size: 0.82rem; color: var(--fainttext); line-height: 1.75; }
-      .project-arrow { display: inline-block; margin-top: 1rem; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--fainttext); transition: color 0.25s; }
-      .project-card:hover .project-arrow { color: var(--accent); }
-
-      .cv-timeline {position: relative;}
-        /* counter-reset: cv-counter;} */
-
-      /* .cv-timeline::before {content: '';
-        position: absolute;left: 140px;
-        top: 0;bottom: 0;
-        width: 1px;background: rgba(255,80,120,0.08);
-      } */
-      .cv-entry {display: grid;grid: 140px 1fr;
-        gap: 3rem;padding: 2.2rem 0;
-        /* border-bottom: 1px solid rgba(255,80,120,0.07); */
-        /* counter-increment: cv-counter; */
-      }
-
-      /* .cv-entry:first-child { border-top: 1px solid rgba(255,80,120,0.07); } */
-      .cv-year { font-size: 0.75rem; letter-spacing: 0.15em; color: var(--accentfaint); padding-top: 0.2rem; text-align: right; text-transform: uppercase; white-space: nowrap; }
-      .cv-title { font-size: 1rem; font-weight: 400; color: var(--secondtext); margin-bottom: 0.5rem; }
-      .cv-place { font-size: 0.78rem; color: var(--accentdim); letter-spacing: 0.08em; margin-bottom: 0.7rem; }
-      .cv-detail { font-size: 0.82rem; color: var(--fainttext); line-height: 2.0; }
-      .cv-download { margin-top: 2.5rem; }
-
-      /* .cv-entry {
-        counter-increment: cv-counter;
-      }
-
-      .cv-timeline {
-        counter-reset: cv-counter;
-      } */
-/* 
-      .cv-entry .cv-year::before {
-        content: counter(cv-counter, decimal-leading-zero) " ";
-        font-family: 'Courier New', monospace;
-        font-size: 8px;
-        color: var(--accentfaint);
-        opacity: 0.45;
-        display: inline;
-        letter-spacing: 0.1em;
-        /* margin-bottom: 0.4rem; */
-      /* } */ */
-
-      #cv .section-inner {
-        max-width: none;
-        width: 100%;
-        margin: 0;
-        padding: 7rem 6rem; 
-      }
-
-      footer {
-        position: relative; z-index: 10;
-        text-align: center; padding: 2.5rem 2rem;
-        font-weight: 200; font-size: 10px; letter-spacing: 0.25em;
-        color: var(--accentfaint);
-        border-top: 1px solid rgba(255,80,120,0.06);
-      }
-      footer a { color: var(--accentfaint); text-decoration: none; transition: color 0.25s; }
-      footer a:hover { color: var(--accentdim); }
-
-      @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-
-      .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
-      .reveal.visible { opacity: 1; transform: none; }
-
-    /* cute stuff */
-      .talk-item {display: flex;align-items: center;justify-content: space-between;gap: 12px;}
-      .talk-venues {display: flex;gap: 8px;}
-      .journal-badge.older {opacity: 0.5;}
-
-      .publication-list {display: flex;flex-direction: column;gap: 10px;margin-top: 8px;}
-      .publication-item {display: flex;
-        align-items: center;gap: 10px;text-decoration: none;color: var(--secondtext);
-        font-size: 0.85rem;transition: color 0.25s;}
-
-      .publication-item:hover { color: var(--accent); }
-
-      .journal-badge {background: var(--darkred);color: var(--accenttwo);
-        border: 1px solid rgba(255, 120, 120, 0.35);border-radius: 3px;
-        padding: 2px 8px;font-size: 0.7rem;letter-spacing: 0.1em;white-space: nowrap;}
-
-
-
-    /* .type-cursor {
-      color: var(--accent);
-      animation: blink 6s step-end infinite;
-    } */
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0; }
-    }
-
-    /*  */
-    .talk-item em {font-size: 0.82rem;font-style: normal;color: var(--secondtext);}
-
-    .talk-venues {display: flex;gap: 8px;}
-
-
-    .talk-links span {font-size: 0.8rem;
-      color: var(--secondtext);}
-
-    .talk-links em {font-size: 0.65rem;
-      font-style: normal;letter-spacing: 0.08em;
-      color: var(--accentfaint);}
-
-    .talk-links a:hover {border-color: var(--borderhover);
-      background: rgba(255,80,120,0.08);transform: translateX(3px);}
-
-
-    /* star shaped status dot */
-    .status-dot {
-      display: inline-block; width: 8px; height: 8px;
-      background: var(--accenttwo); box-shadow: 0 0 6px var(--accenttwo);
-
-      clip-path: polygon(50% 0%,
-        61% 35%, 98% 35%,
-        68% 57%, 79% 91%,
-        50% 70%, 21% 91%,
-        32% 57%, 2% 35%,
-        39% 35% );
-
-      animation: pulse-dot 2s ease-in-out infinite;
-      margin-right: 6px;
-      vertical-align: middle;
-      position: relative;
-      top: -1px;
-    }
-      
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1;   box-shadow: 0 0 5px var(--accent); }
-      50%       { opacity: 0.4; box-shadow: 0 0 12px var(--accent); }
-    }
-
-    </style>
-  
 </head>
 <body>
-  
-  <div class="bg-gradient"></div>
-  <canvas id="starfield"></canvas>
- 
   <nav>
     <a class="nav-logo" href="#hero">@crixiii</a>
     <ul class="nav-links">
@@ -548,501 +23,109 @@
   </nav>
 
   <section id="hero">
-    <p class="eyebrow"> MSc Astrophysics Student </p>
+    <p class="eyebrow"> Master's Astrophysics Graduate </p>
     <h1> Clarinda Montilla </h1>
-    
-    <!-- watch this space ?????? :o -->
     <div class="cta-row">
-      <a class="btn btn-primary" href="#projects">my work</a>
-      <a class="btn btn-primary"   href="#about">about me</a>
+      <a class="btn btn-primary" href="#projects">My Work</a>
+      <a class="btn btn-primary"   href="#about">About Me</a>
     </div>
-    <div class="hero-divider"></div>
-
+    
   </section>
 
-    <section id="about">
-    <div class="section-inner reveal">
-      <p class="section-label">About Me</p>
-      
-      <div class="section-divider"></div>
-      <div class="about-grid">
-        <img src="imgs/pfp2.jpg" alt="Clarinda Montilla" class="about-pfp" />
-        <!-- <div class="about-bio"> -->
-          <!-- <p> -->
-            <!-- :D -->
-          <!-- </p> -->
-          <!-- <p> -->
-            <!-- coming soon! -->
-          <!-- </p> -->
-          
-          <!-- <div class="tags">
-            <span class="tag">Supernovae</span>
-            <span class="tag">GRBs</span>
-            <span class="tag">Time-domain</span>
-            <span class="tag">Photometry</span>
-            <span class="tag">Spectroscopy</span>
-            <span class="tag">Survey Science</span>
-          </div> -->
-        <!-- </div> -->
-        <div class="about-stats">
-          <div class="stat-card">
-            <p class="stat-label">Institution</p>
-            <p class="stat-value">University of Canterbury</p>
-          </div>
-            <div class="stat-card">
-              <p class="stat-label">Current Supervisors</p>
-              <p class="stat-value" style="font-weight: 200;">Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler, Assoc. Prof. Michael Albrow</p>
-            </div>
-          <!-- <div class="stat-card">
-            <p class="stat-label">Contact</p>
-            <p class="stat-value">clarinda.montilla@pg.canterbury.ac.nz</p>
-          </div> -->
+
+  <section id="about">
+    <h2>About Me</h2>
+    <div class="about-grid">
+      <img src="imgs/pfp2.jpg" alt="Clarinda Montilla" class="about-pfp" />
+      <div class="about-stats">
+        <div class="stat-card">
+          <p class="stat-label">Current Supervisors</p>
+          <p class="stat-value">Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler, Assoc. Prof. Michael Albrow</p>
         </div>
       </div>
     </div>
   </section>
 
 
-    <section id="projects">
-    <div class="section-inner reveal">
-      <p class="section-label">Projects</p>
-      <h2>Research </h2>
-      <div class="section-divider"></div>
-      <div class="projects-grid">
+  <section id="projects">
+    <h2>Research</h2>
+    <div class="projects-grid">
  
-
-        <!-- to be written -->
-        <!-- <a class="project-card" href="#">
-          <p class="project-type"><span class="status-dot"></span>Research</p>
-          <p class="project-name">grb</p>
-          <p class="project-desc">
-            description
-          </p>
-          <span class="project-arrow">view more</span>
-        </a> -->
-        
-        <div class="project-card">
-          <p class="project-type"><span class="status-dot"></span>Publications</p>
-          <div class="publication-list">
-            <a href="https://arxiv.org/abs/2502.16905" target="_blank" class="publication-item">
-              <span class="journal-badge">AJ 2025</span>
-              TESSELLATE: Piecing Together the Variable Sky with TESS (Roxburgh et al.)
-            </a>
-            <a href="https://arxiv.org/abs/2511.15975" target="_blank" class="publication-item">
-              <span class="journal-badge">ApJ 2025</span>
-              SN 2019vxm: A Shocking Coincidence between Fermi and TESS (Lane et al.)
-            </a>
-          </div>
+      <div class="project-card">
+        <p class="project-type">Publications</p>
+        <div class="publication-list">
+          <a href="https://arxiv.org/abs/2502.16905" target="_blank" class="publication-item">
+            <span class="journal-badge">AJ 2025</span>
+            TESSELLATE: Piecing Together the Variable Sky with TESS (Roxburgh et al.)
+          </a>
+          <a href="https://arxiv.org/abs/2511.15975" target="_blank" class="publication-item">
+            <span class="journal-badge">ApJ 2025</span>
+            SN 2019vxm: A Shocking Coincidence between Fermi and TESS (Lane et al.)
+          </a>
         </div>
-
-        <!--  -->
-
-        <div class="project-card">
-          <p class="project-type">Conference Talks</p>
-          <div class="publication-list">
-            <div class="talk-item">
-              <em>Beaming in FRBs</em>
-              <div class="talk-venues">
-                <a href="https://www.youtube.com/watch?v=yKaCh9PA4yU" target="_blank" class="journal-badge">FTSky 2025</a>
-                <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank" class="journal-badge older">FRB 2025</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
       </div>
+ 
+      <div class="project-card">
+        <p class="project-type">Conference Talks</p>
+        <div class="publication-list">
+          <a href="https://www.youtube.com/watch?v=yKaCh9PA4yU" target="_blank" class="publication-item">
+            <span class="journal-badge">FTSky 2025</span>
+            Beaming in FRBs
+          </a>
+          <a href="https://youtu.be/6jk-chkKWJ4?t=2750" target="_blank" class="publication-item">
+            <span class="journal-badge">FRB 2025</span>
+            Beaming in FRBs
+          </a>
+        </div>
+      </div>
+ 
     </div>
   </section>
 
-  <!-- new section -->
-  <section id="cv">
-    <div class="section-inner reveal">
-      <p class="section-label">CV</p>
-      <h2>Education</h2>
-      <div class="section-divider"></div>
-      <div class="cv-timeline">
 
-        <div class="cv-entry">
-          <div class="cv-year">March 2025 - April 2026</div>
-          <div>
-            <p class="cv-title">MSc in Astronomy</p>
-            <p class="cv-place">University of Canterbury</p>
-            <p class="cv-detail">
-              Thesis: <em>"The Need for Speed: Modelling Fast Transients"</em><br>
-              Supervisors: Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler, Assoc. Prof. Michael Albrow<br>
-              Focus: GRBs, FRBs, time-domain astronomy, simulations
-            </p>
-          </div>
-        </div>
-
-        <div class="cv-entry">
-          <div class="cv-year">February - November 2024</div>
-          <div>
-            <p class="cv-title">BSc with Honours in Astronomy</p>
-            <p class="cv-place">University of Canterbury</p>
-            <p class="cv-detail">First Class Honours<br>Supervisor: Dr. Ryan Ridden-Harper</p>
-          </div>
-        </div>
-
-        <div class="cv-entry">
-          <div class="cv-year">February 2021 - November 2023</div>
-          <div>
-            <p class="cv-title">BSc in Mathematics and Physics</p>
-            <p class="cv-place">University of Canterbury</p>
-          </div>
-        </div>
-
+<section id="cv">
+    <h2>Education</h2>
+ 
+    <div class="cv-entry">
+      <div class="cv-year">March 2025 – April 2026</div>
+      <div>
+        <p class="cv-title">MSc in Astronomy</p>
+        <p class="cv-place">University of Canterbury</p>
+        <p class="cv-detail">
+          Thesis: "The Need for Speed: Modelling Fast Transients"<br>
+          Supervisors: Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler, Assoc. Prof. Michael Albrow<br>
+          Focus: GRBs, FRBs, time-domain astronomy, simulations
+        </p>
       </div>
     </div>
-  <section>
+ 
+    <div class="cv-entry">
+      <div class="cv-year">February – November 2024</div>
+      <div>
+        <p class="cv-title">BSc with Honours in Astronomy</p>
+        <p class="cv-place">University of Canterbury</p>
+        <p class="cv-detail">First Class Honours<br>Supervisor: Dr. Ryan Ridden-Harper</p>
+      </div>
+    </div>
+ 
+    <div class="cv-entry">
+      <div class="cv-year">February 2021 – November 2023</div>
+      <div>
+        <p class="cv-title">BSc in Mathematics and Physics</p>
+        <p class="cv-place">University of Canterbury</p>
+      </div>
+    </div>
+ 
+  </section>
+
   <footer>
     <p>
       &copy; 2026 &nbsp;·&nbsp;
       <a href="mailto:clarinda.montilla@pg.canterbury.ac.nz">Email</a> &nbsp;·&nbsp;
       <a href="https://github.com/crixiii" target="_blank">GitHub</a> &nbsp;·&nbsp;
       <a href="https://orcid.org/0009-0008-4935-069X" target="_blank">ORCID</a>
-      &nbsp;·&nbsp; updated may 2026 
     </p>
   </footer>
  
-  
-  <script>
-    // setup  
-    const canvas = document.getElementById('starfield');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-
-    function resize() {
-      canvas.width  = document.documentElement.scrollWidth;
-      canvas.height = document.documentElement.scrollHeight;
-      buildStars(canvas.width, canvas.height);
-    }
-    window.addEventListener('resize', resize);
-    window.addEventListener('load', resize);
-
-    function buildStars(W, H) {
-      stars = [];
-      for (let i = 0; i < 3000; i++) {
-        stars.push({
-          x: Math.random(), y: Math.random(),
-          r: Math.pow(Math.random(), 4) * 2,
-          base: Math.random() * 0.25,
-          phase: Math.random() * Math.PI * 2,
-          speed: Math.random() * 0.2 + 0.05,
-          exploding: false,
-          tint: 'rgba(255,240,245,',
-        });
-      }
-    }
-
-    canvas.width  = document.documentElement.scrollWidth;
-    canvas.height = document.documentElement.scrollHeight;
-    buildStars(canvas.width, canvas.height);
-
-
-    // let mouseX=0.5, mouseY=0.5;
-    // let targetX=0.5, targetY=0.5;
-
-    // window.addEventListener('mousemove',e=>{
-    //   targetX=e.clientX/window.innerWidth;
-    //   targetY=e.clientY/window.innerHeight;
-    // });
-
-    // idk what im doing 
-    const supernovae = [];
-
-    function launchSupernova() {
-      const scrollTop = window.scrollY;
-      const viewH     = window.innerHeight;
-      const W = canvas.width, H = canvas.height;
-
-      let eligible = stars.filter(s => {
-        if (s.exploding || s.r < 0.4) return false;
-        const py = s.y * H;
-        return py >= scrollTop && py <= scrollTop + viewH;
-      });
-      if (!eligible.length) eligible = stars.filter(s => !s.exploding && s.r >= 0.4);
-      if (!eligible.length) return;
-
-      const star = eligible[Math.floor(Math.random() * eligible.length)];
-      star.exploding = true;
-      const cx = star.x * W, cy = star.y * H;
-
-      const numEjecta = 14 + Math.floor(Math.random() * 10);
-      const ejecta = Array.from({ length: numEjecta }, (_, i) => {
-        const angle = (Math.PI * 2 * i / numEjecta) + (Math.random() - 0.5) * 0.6;
-        const speed = Math.random() * 1.1 + 0.25;
-        return {
-          vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-          px: cx, py: cy,
-          r:  Math.random() * 0.8 + 0.15,
-          life: 1.0,
-          decay: Math.random() * 0.004 + 0.0025,
-          hue: 195 + Math.random() * 80,
-        };
-      });
-
-      supernovae.push({
-        cx, cy, star,
-        phase: 'swell', age: 0,
-        ring: 0, ringMax: 55 + Math.random() * 45,
-        ringAlpha: 0.0, ejecta,
-      });
-    }
-
-    // setTimeout(() => {
-    //   launchSupernova();
-    //   setInterval(launchSupernova, 7000 + Math.random() * 7000);
-    // }, 4000);
-
-
-    // hopefully this makes it less laggy
-    let supernovaInterval = null;
-    function startSupernovaLoop() {
-      if (supernovaInterval) return;
-      supernovaInterval = setInterval(() => {
-        launchSupernova();}, 7000 + Math.random() * 7000);
-    }
-
-    function stopSupernovaLoop() {
-      clearInterval(supernovaInterval);
-      supernovaInterval = null;
-    }
-    setTimeout(startSupernovaLoop, 4000);
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {stopSupernovaLoop();
-      } else {startSupernovaLoop();}
-    });
-
-    // 
-
-    let t = 0;
-
-    function draw() {
-      const W = canvas.width, H = canvas.height;
-      ctx.clearRect(0, 0, W, H);
-
-      for (const s of stars) {
-        if (s.exploding) continue;
-        const alpha = s.base + Math.sin(t * s.speed + s.phase) * (s.base * 0.45);
-        ctx.beginPath();
-        ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = s.tint + alpha + ')';
-        ctx.fill();
-      }
-
-      for (let i = supernovae.length - 1; i >= 0; i--) {
-        const sn = supernovae[i];
-        sn.age++;
-
-        if (sn.phase === 'swell') {
-          const progress = Math.min(sn.age / 50, 1);
-          const ease = progress < 0.5
-            ? 2 * progress * progress
-            : -1 + (4 - 2 * progress) * progress;
-          const r = sn.star.r + ease * 3.5;
-          const a = ease * 0.55;
-          const grd = ctx.createRadialGradient(sn.cx, sn.cy, 0, sn.cx, sn.cy, r * 5);
-          grd.addColorStop(0,    `rgba(200,215,255,${a})`);
-          grd.addColorStop(0.3,  `rgba(160,170,255,${a * 0.45})`);
-          grd.addColorStop(0.65, `rgba(120,100,220,${a * 0.15})`);
-          grd.addColorStop(1,    'rgba(60,30,140,0)');
-          ctx.beginPath();
-          ctx.arc(sn.cx, sn.cy, r * 5, 0, Math.PI * 2);
-          ctx.fillStyle = grd; ctx.fill();
-          ctx.beginPath();
-          ctx.arc(sn.cx, sn.cy, r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(230,240,255,${a * 0.9})`; ctx.fill();
-          sn.ringAlpha = Math.max(0, (progress - 0.6) * 2.5);
-          if (sn.age >= 50) { sn.phase = 'ring'; sn.age = 0; }
-
-        } else if (sn.phase === 'ring') {
-          sn.ring += 0.7 + sn.ring * 0.008;
-          sn.ringAlpha = Math.max(0, 1 - sn.ring / sn.ringMax);
-          sn.labelAlpha = Math.min(1, sn.age / 40) * sn.ringAlpha * 0.6;
-          if (sn.ring > sn.ringMax) { sn.phase = 'done'; }
-
-          if (sn.ringAlpha > 0.005) {
-            const sg = ctx.createRadialGradient(sn.cx, sn.cy, sn.ring * 0.6, sn.cx, sn.cy, sn.ring * 1.4);
-            sg.addColorStop(0,    'rgba(140,160,255,0)');
-            sg.addColorStop(0.45, `rgba(160,180,255,${sn.ringAlpha * 0.18})`);
-            sg.addColorStop(0.72, `rgba(120,100,220,${sn.ringAlpha * 0.22})`);
-            sg.addColorStop(1,    'rgba(60,20,140,0)');
-            ctx.beginPath();
-            ctx.arc(sn.cx, sn.cy, sn.ring * 1.4, 0, Math.PI * 2);
-            ctx.fillStyle = sg; ctx.fill();
-
-            ctx.beginPath();
-            ctx.arc(sn.cx, sn.cy, sn.ring, 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(180,200,255,${sn.ringAlpha * 0.3})`;
-            ctx.lineWidth = 0.8; ctx.stroke();
-
-            const ra = Math.max(0, sn.ringAlpha * 1.2 - 0.4);
-            if (ra > 0) {
-              ctx.beginPath();
-              ctx.arc(sn.cx, sn.cy, 1.8, 0, Math.PI * 2);
-              ctx.fillStyle = `rgba(210,225,255,${ra})`; ctx.fill();
-            }
-          }
-
-          for (const p of sn.ejecta) {
-            p.px += p.vx; p.py += p.vy;
-            p.vx *= 0.988; p.vy *= 0.988;
-            p.life -= p.decay;
-            if (p.life <= 0) continue;
-            ctx.beginPath();
-            ctx.arc(p.px, p.py, p.r * p.life, 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${p.hue},60%,80%,${p.life * 0.4})`; ctx.fill();
-          }
-
-
-        } else if (sn.phase === 'done') {
-          sn.star.exploding = false;
-          supernovae.splice(i, 1);
-        }
-      }
-
-      t += 0.011;
-      requestAnimationFrame(draw);
-    }
-
-    draw();
-
-    // bkg
-    
-
-    // cursor
-    const cursorCanvas = document.createElement('canvas');
-    cursorCanvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
-    document.body.appendChild(cursorCanvas);
-    const cc = cursorCanvas.getContext('2d');
- 
-    function resizeCursor() {
-      cursorCanvas.width  = window.innerWidth; cursorCanvas.height = window.innerHeight;
-    }
-    resizeCursor();
-    window.addEventListener('resize', resizeCursor);
- 
-    let mouse = { x: -200, y: -200 };
-    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-
-
-    // cursor trail
-    function drawStar(c, x, y, size, alpha, hue, glow = false) {
-      const spikes = 5;
-      const outer  = size;
-      const inner  = size * 0.38;
-      c.save();
-      c.globalAlpha = alpha;
-      c.translate(x, y);
-      c.rotate(Math.PI / 4);
-      c.beginPath();
-      for (let i = 0; i < spikes * 2; i++) {
-        const r     = i % 2 === 0 ? outer : inner;
-        const angle = (i * Math.PI) / spikes;
-        i === 0 ? c.moveTo(Math.cos(angle)*r, Math.sin(angle)*r)
-                : c.lineTo(Math.cos(angle)*r, Math.sin(angle)*r);}
-      c.closePath();
-      c.fillStyle = `hsla(${hue},80%,92%,1)`;
-      if (glow) {
-        c.shadowColor = `hsla(${hue},90%,80%,0.9)`;
-        c.shadowBlur  = size * 2.5;}
-      c.fill();
-      c.restore();
-    }
- 
-
-    let cursorT = 0;
-
-    const TRAIL_LEN = 28;
-    const trail = Array.from({ length: TRAIL_LEN }, () => ({ x: -200, y: -200 }));
-    let trailHead = 0;
-
-    function drawCursor() {
-      cc.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
-      trail[trailHead] = { x: mouse.x, y: mouse.y };
-      trailHead = (trailHead + 1) % TRAIL_LEN;
- 
-      for (let i = 0; i < TRAIL_LEN; i++) {
-        const idx   = (trailHead + i) % TRAIL_LEN;
-        const pt    = trail[idx];
-        const frac  = i / TRAIL_LEN;
-        const alpha = frac * frac * 0.65;
-        const size  = 2.5 + frac * 5.5;
-        const hue   = 340 + frac * 30;  
-        if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue);
-      }
-      
-      // if (alpha > 0.01) drawStar(cc, pt.x, pt.y, size, alpha, hue, false);
-      const pulse = 1 + Math.sin(cursorT * 0.3) * 0.15;
-      drawStar(cc, mouse.x, mouse.y, 8 * pulse, 0.95, 345, true);
-
-      cursorT += 0.06;
-      requestAnimationFrame(drawCursor);
-    }
-    drawCursor();
-
-
-      
-    function launchSupernovaAt(cx, cy) {
-      const numEjecta = 18 + Math.floor(Math.random() * 12);
-      const ejecta = Array.from({ length: numEjecta }, (_, i) => {
-        const angle = (Math.PI * 2 * i / numEjecta) + (Math.random() - 0.5) * 0.5;
-        const speed = Math.random() * 1.4 + 0.4;
-        return {
-          vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-          px: cx, py: cy,
-          r: Math.random() * 1.0 + 0.2,
-          life: 1.0,
-          decay: Math.random() * 0.004 + 0.002,
-          hue: 340 + Math.random() * 40,
-        };
-      });
-
-      const fakeStar = { r: 1.5, exploding: true };
-      supernovae.push({
-        cx, cy, star: fakeStar,
-        phase: 'swell', age: 0,
-        ring: 0,ringMax: 65 + Math.random() * 55,
-        ringAlpha: 0.0,ejecta,
-      });
-    }
- 
-    window.addEventListener('click', e => {
-      launchSupernovaAt(e.clientX + window.scrollX, e.clientY + window.scrollY);
-    });
- 
-
-
-    const observer = new IntersectionObserver(
-      entries => entries.forEach(e => {
-        if (e.isIntersecting) e.target.classList.add('visible');
-      }),
-      { threshold: 0.12 }
-    );
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-
-    // cute but clunky 
-  // const phrases = [
-  //   'astronomer',
-  //   // 'transient hunter',
-  // ];
-  // let phraseIdx = 0, charIdx = 0, deleting = false;
-  // const typeEl = document.getElementById('typewriter');
-  // function tick() {
-  //   const current = phrases[phraseIdx];
-  //   typeEl.textContent = deleting ? current.slice(0, charIdx--) : current.slice(0, charIdx++);
-  //   let delay = deleting ? 55 : 95;
-  //   if (!deleting && charIdx > current.length) { delay = 1600; deleting = true; }
-  //   else if (deleting && charIdx < 0) { deleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; delay = 400; }
-  //   setTimeout(tick, delay);
-  // }
-  // tick();
-
- </script>
-
 </body>
-
 </html>
