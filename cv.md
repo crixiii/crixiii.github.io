@@ -26,10 +26,17 @@ permalink: /cv/
 
 ## employment
 
+- **Research Assistant, University of Canterbury** (current)<br>
+  Continuing my Masters research to produce papers alongside the Cosmic Cataclysms Collaboration.
 - **Townsend Teece Observer and Outreach Guide, University of Canterbury** (June 2023 - present)<br>
   Lead tour groups of 10-20 people through the Townsend Teece Observatory Tower and the Ōtehīwai Mount John Observatory, set up and pack down telescopes, and take part in outreach to primary schools through the Children's University program.
 - **Astronomy Tutor, University of Canterbury** (February 2024 - present)<br>
   Tutor for ASTR109: The Cosmos: Birth and Evolution (Semester One) from 2024 to 2026. Planned tutorial sessions for online and in-person classes (around 50 students), and graded assignments and exams.
+
+## volunteering
+
+- **Digital Seniors** (July 2026 - present)<br>
+  Two hours, two days a week, helping older people build confidence with technology, from setting up email accounts and online visa applications to organising digital legacies.
 
 ## skills
 
