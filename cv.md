@@ -11,7 +11,7 @@ permalink: /cv/
 ## education
 
 - **M.Sc Astronomy, University of Canterbury** (March 2025 - April 2026)<br>
-  Grade: Distinction. Thesis: *The Need for Speed: Modelling Fast Transients*. Supervisors: Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler and Associate Professor Michael Albrow.
+  Grade: Distinction. Thesis: *The Need for Speed: Modelling Fast Transients*. Supervisors: Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler and Associate Professor Michael Albrow. Focus: GRBs, FRBs, time-domain astronomy, simulations.
 - **B.Sc Hons Astronomy, University of Canterbury** (February 2024 - November 2024)<br>
   Grade: First Class. Thesis: *Finding the Fastest Explosions with TESS*. Supervisor: Dr. Ryan Ridden-Harper.
 - **B.Sc Physics and Mathematics, University of Canterbury** (February 2021 - November 2023)
