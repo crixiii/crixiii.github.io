@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <canvas id="stars"></canvas>
+
+  <main>
+    {% unless page.url == '/' %}
+      <a class="back" href="{{ '/' | relative_url }}">&lt; back</a>
+    {% endunless %}
+
+    {{ content }}
+  </main>
+
+  <script src="{{ '/assets/js/stars.js' | relative_url }}"></script>
+</body>
+</html>
