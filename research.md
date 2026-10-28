@@ -10,7 +10,7 @@ My most relevant work models the energy distributions of hyperactive FRBs. It st
 
 ## publications
 
-1. "AT 2020afjz (TSS2020a): The First Fast Extragalactic Transient Discovered by TESS", 2026. [ADS](https://scixplorer.org/abs/2026arXiv260817242R/abstract)
+1. R. Ridden-Harper, H. Roxburgh, **C. Montilla**, et al., "AT 2020afjz (TSS2020a): The First Fast Extragalactic Transient Discovered by TESS", 2026. [arXiv](https://arxiv.org/abs/2608.17242) · [ADS](https://scixplorer.org/abs/2026arXiv260817242R/abstract)
 2. Z. G. Lane, R. Ridden-Harper, S. Rest, A. Rest, C. L. Ransome, Q. Wang, **C. Montilla**, et al., "SN 2019vxm: A Shocking Coincidence between Fermi and TESS", ApJ 1003, 19, 2026. [arXiv](https://arxiv.org/abs/2511.15975) · [ADS](https://scixplorer.org/abs/2026ApJ..1003...19L/abstract)
 2. **C. Montilla**, J. Jahns-Schindler, et al., "Beaming in fast radio bursts", in preparation, 2026.
 3. H. Roxburgh, R. Ridden-Harper, A. Moore, **C. Montilla**, et al., "TESSELLATE: Piecing Together the Variable Sky With TESS", AJ 170, 186, 2025. [arXiv](https://arxiv.org/abs/2502.16905) · [ADS](https://scixplorer.org/abs/2025AJ....170..186R/abstract)
@@ -24,7 +24,7 @@ My most relevant work models the energy distributions of hyperactive FRBs. It st
 - **July 2025** Astronomical Society of Australia Annual Scientific Meeting: *Colouring High Cadence Light-curves of Optical Transients*
 
 <figure class="photo">
-  <img src="{{ '/assets/images/asm25.jpg' | relative_url }}" alt="presenting a talk at ASA ASM 2025">
+  <img src="{{ '/assets/images/asm25talk.jpg' | relative_url }}" alt="presenting a talk at ASA ASM 2025">
   <figcaption>presenting at ASA ASM 2025</figcaption>
 </figure>
 
@@ -55,14 +55,14 @@ My most relevant work models the energy distributions of hyperactive FRBs. It st
 
 <div class="gallery">
   <figure>
-    <a href="{{ '/assets/images/moa_b.jpg' | relative_url }}">
-      <img src="{{ '/assets/images/moa_b.jpg' | relative_url }}" alt="MOA and B&C telescope domes at Mount John Observatory">
+    <a href="{{ '/assets/images/moa_bc.jpg' | relative_url }}">
+      <img src="{{ '/assets/images/moa_bc.jpg' | relative_url }}" alt="MOA and B&C telescope domes at Mount John Observatory">
     </a>
     <figcaption>MOA and B&amp;C domes, Mount John</figcaption>
   </figure>
   <figure>
-    <a href="{{ '/assets/images/obs1.jpg' | relative_url }}">
-      <img src="{{ '/assets/images/obs1.jpg' | relative_url }}" alt="looking through a telescope eyepiece in red light">
+    <a href="{{ '/assets/images/obs.jpg' | relative_url }}">
+      <img src="{{ '/assets/images/obs.jpg' | relative_url }}" alt="looking through a telescope eyepiece in red light">
     </a>
     <figcaption>observing</figcaption>
   </figure>

@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&family=Carlito:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="{{ '/assets/favicon.svg' | relative_url }}">
+  <link rel="icon" type="image/png" href="{{ '/assets/favicon.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 </head>
 <body class="{{ page.class }}">
@@ -15,7 +17,6 @@
   <header>
     <a class="logo" href="{{ '/' | relative_url }}">{{ site.title }}</a>
     <nav>
-      <a href="{{ '/work/' | relative_url }}" {% if page.url == '/work/' %}class="current"{% endif %}>my work</a>
       <a href="{{ '/cv/' | relative_url }}" {% if page.url == '/cv/' %}class="current"{% endif %}>CV</a>
       <a href="{{ '/about/' | relative_url }}" {% if page.url == '/about/' %}class="current"{% endif %}>about me</a>
       <a href="{{ '/research/' | relative_url }}" {% if page.url == '/research/' %}class="current"{% endif %}>research</a>
