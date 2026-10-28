@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <canvas id="stars"></canvas>
+
+  <header>
+    <a class="logo" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+    <nav>
+      <a href="{{ '/work/' | relative_url }}" {% if page.url == '/work/' %}class="current"{% endif %}>my work</a>
+      <a href="{{ '/cv/' | relative_url }}" {% if page.url == '/cv/' %}class="current"{% endif %}>CV</a>
+      <a href="{{ '/about/' | relative_url }}" {% if page.url == '/about/' %}class="current"{% endif %}>about me</a>
+      <a href="{{ '/talks/' | relative_url }}" {% if page.url == '/talks/' %}class="current"{% endif %}>talks</a>
+    </nav>
+  </header>
+
+  <main class="{{ page.class }}">
+    {{ content }}
+  </main>
+
+  <script src="{{ '/assets/js/stars.js' | relative_url }}"></script>
+</body>
+</html>
