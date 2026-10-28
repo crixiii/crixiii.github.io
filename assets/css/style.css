@@ -1,33 +1,21 @@
 :root {
-  --light: #d4cbea;    
-  --mid: #81799f;      
-  --dim: #b0a8c8;       
-
-  --bg-dark: #242438;  
-  --bg-mid: #494968;    
-  --surface: #353451;     
-  --surface-hover: #45425f;
-  --border: #5b5577;
+  --light: #c9bcff;
+  --mid: #8d7df0;
+  --dim: #7a6bd8;
 }
 
 * {
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   min-height: 100vh;
   font-family: Calibri, Carlito, sans-serif;
-  color: #f0edf7;
-  background: linear-gradient(
-    to bottom,
-    #353451,
-    #65648A 30%,
-    #494968 65%,
-    #242438
-  );
+  color: white;
+  background: linear-gradient(to bottom, #2a1a8a, #6a4de6 20%, #3d26b0 60%, #22106b);
   background-attachment: fixed;
 }
-
 
 #stars {
   position: fixed;
@@ -52,14 +40,9 @@ main.home {
 
 body.home {
   background:
-    linear-gradient(
-      to bottom,
-      rgba(36, 36, 56, 0.05) 30%,
-      rgba(36, 36, 56, 0.9)
-    ),
+    linear-gradient(to bottom, rgba(34, 16, 107, 0) 40%, rgba(34, 16, 107, 0.8)),
     url("../images/mw.jpg") center / cover fixed;
 }
-
 
 body.home #stars {
   display: none;
@@ -85,8 +68,6 @@ h2 {
 
 a {
   color: var(--light);
-  text-decoration-color: rgba(212, 203, 234, 0.4);
-  text-underline-offset: 3px;
 }
 
 a:hover {
@@ -118,25 +99,35 @@ p, li {
 }
 
 .gallery figcaption {
+  margin-top: 6px;
+  font-size: 0.95rem;
   color: var(--dim);
 }
 
 header {
-  background: rgba(36, 36, 56, 0.92);
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 10px 20px;
+  background: rgba(34, 16, 107, 0.85);
+  border-bottom: 3px solid var(--mid);
 }
 
 header a {
   text-decoration: none;
-  color: var(--light);
-  transition: color 0.2s ease;
+  color: var(--mid);
 }
 
 header a:hover,
 header a.current {
-  color: #ffffff;
+  color: white;
 }
 
 .logo {
@@ -180,10 +171,10 @@ h3 {
   border: 3px solid var(--mid);
 }
 
-
-.posters figcaption,
-.photo figcaption {
-  color: var(--dim);
+.posters figcaption {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: var(--light);
 }
 
 .pfp {
@@ -221,5 +212,5 @@ body.home .subtitle {
 }
 
 * {
-  cursor: url("../cursor.svg") 10 10, auto;
+  cursor: url("../cursor.svg") 16 16, auto;
 }
