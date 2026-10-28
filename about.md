@@ -6,9 +6,9 @@ permalink: /about/
 
 # about me
 
-Hi, I'm a PhD student at Uni working on ...
+I'm an astronomy student at the University of Canterbury, interested in time-domain astronomy, fast transients and sky surveys. My thesis work is on improving detection methods in TESS and analysing transients for the TESSELLATE sky survey.
 
-You can reach me at [you@uni.edu](mailto:you@uni.edu).
+[email](mailto:clarinda.montilla@gmail.com) · [github](https://github.com/crixiii) · [orcid](https://orcid.org/0009-0008-4935-069X)
 
 ## hobbies
 

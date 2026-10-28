@@ -11,7 +11,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Pixelify Sans", monospace;
+  font-family: Calibri, Carlito, sans-serif;
   color: white;
   background: linear-gradient(to bottom, #2a1a8a, #6a4de6 20%, #3d26b0 60%, #22106b);
   background-attachment: fixed;
@@ -130,4 +130,39 @@ header nav {
   flex-wrap: wrap;
   gap: 8px 24px;
   font-size: 1.15rem;
+}
+
+h1, h2, h3, .logo, header nav {
+  font-family: "Pixelify Sans", monospace;
+}
+
+h3 {
+  font-weight: 500;
+  color: var(--light);
+}
+
+.posters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.posters figure {
+  margin: 0;
+}
+
+.posters img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.25);
+  border: 3px solid var(--mid);
+}
+
+.posters figcaption {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: var(--light);
 }
