@@ -242,3 +242,19 @@ body.has-banner main {
 body.has-banner h1 {
   text-shadow: 0 2px 14px rgba(20, 16, 46, 0.9);
 }
+
+.icons {
+  display: flex;
+  gap: 22px;
+  margin: 0;
+}
+
+.icons a {
+  font-size: 1.9rem;
+  color: var(--light);
+  text-decoration: none;
+}
+
+.icons a:hover {
+  color: white;
+}
