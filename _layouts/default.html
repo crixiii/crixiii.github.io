@@ -11,8 +11,19 @@
   <link rel="icon" type="image/png" href="{{ '/assets/favicon.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 </head>
-{% assign banner = site.data.banners[page.url] %}
-<body class="{{ page.class }}{% if banner %} has-banner{% endif %}">
+{% assign banner_path = nil %}
+{% assign banner_name = site.data.banners[page.url] %}
+{% if banner_name %}
+  {% assign want = banner_name | split: '.' | first | downcase %}
+  {% for f in site.static_files %}
+    {% assign have = f.basename | downcase %}
+    {% if have == want %}
+      {% assign banner_path = f.path %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+<body class="{{ page.class }}{% if banner_path %} has-banner{% endif %}">
   <canvas id="stars"></canvas>
 
   <header>
@@ -24,8 +35,10 @@
     </nav>
   </header>
 
-  {% if banner %}
-    <div class="banner" style="background-image: url('{{ '/assets/images/' | append: banner | relative_url }}')"></div>
+  {% if banner_path %}
+    <div class="banner" style="background-image: url('{{ banner_path | relative_url }}')"></div>
+  {% elsif banner_name %}
+    <!-- banner "{{ banner_name }}" not found in the site files -->
   {% endif %}
 
   <main class="{{ page.class }}">
