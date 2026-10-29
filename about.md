@@ -29,6 +29,11 @@ I play piano, guitar, and kalimba, and have played violin for 18 years. I have p
     </a>
     <figcaption>Performing as the concertmaster for a charity concert in 2020</figcaption>
   </figure>
+    <figure>
+    <a href="{{ '/assets/images/Concert_2.jpg' | relative_url }}">
+      <img src="{{ '/assets/images/Concert_2' | relative_url }}" alt="playing violin at a concert">
+    </a>
+    </figure>
   <figure>
     <a href="{{ '/assets/images/jwst.jpg' | relative_url }}">
       <img src="{{ '/assets/images/jwst.jpg' | relative_url }}" alt="crocheted JWST mirror blanket">
