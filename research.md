@@ -47,12 +47,11 @@ My most relevant work models the energy distributions of hyperactive FRBs. It st
     </a>
     <figcaption>Finding Fast Transients with  TESS, Honours research presentation</figcaption>
   </figure>
-</div>
 
   <figure>
     <a href="{{ '/assets/images/obs2.jpg' | relative_url }}">
       <img src="{{ '/assets/images/obs2.jpg' | relative_url }}" alt="outreach telescope on Mount John">
     </a>
-    <figcaption>outreach at Mount John</figcaption>
+    <figcaption>Outreach at Mount John</figcaption>
   </figure>
 </div>
