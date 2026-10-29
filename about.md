@@ -31,7 +31,7 @@ I play piano, guitar, and kalimba, and have played violin for 18 years. I have p
   </figure>
     <figure>
     <a href="{{ '/assets/images/Concert_2.jpg' | relative_url }}">
-      <img src="{{ '/assets/images/Concert_2' | relative_url }}" alt="playing violin at a concert">
+      <img src="{{ '/assets/images/Concert_2.jpg' | relative_url }}" alt="playing violin at a concert">
     </a>
     </figure>
   <figure>
