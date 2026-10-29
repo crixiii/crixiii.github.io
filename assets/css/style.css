@@ -44,6 +44,13 @@ body.home {
     url("../images/mw.jpg") center / cover fixed;
 }
 
+.banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 16, 46, 0.35);
+}
+
 body.home #stars {
   display: none;
 }
@@ -212,5 +219,26 @@ body.home .subtitle {
 }
 
 * {
-  cursor: url("../cursor.svg") 9 9, auto;
+  cursor: url("../cursor.svg") 8 8, auto;
+}
+
+.banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: max(300px, 45vh);
+  z-index: 1;
+  background-size: cover;
+  background-position: center;
+  -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent);
+  mask-image: linear-gradient(to bottom, black 55%, transparent);
+}
+
+body.has-banner main {
+  padding-top: max(220px, 30vh);
+}
+
+body.has-banner h1 {
+  text-shadow: 0 2px 14px rgba(20, 16, 46, 0.9);
 }
