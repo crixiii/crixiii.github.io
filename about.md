@@ -8,7 +8,7 @@ permalink: /about/
 
 <img class="pfp" src="{{ '/assets/images/grad.jpg' | relative_url }}" alt="me at graduation">
 
-I'm an research assistant at the University of Canterbury, interested in time-domain astronomy, fast transients and sky surveys. My work involves modelling fast transients, from GRBs in TESS data to FRB energetics.
+I'm an research assistant at the University of Canterbury, interested in time-domain astronomy, fast transients and sky surveys. My work involves modelling fast transients, from GRBs in TESS data to FRB energetics. I will be starting my PhD at Curtin University in 2027, focusing on using FRBs as cosmological tools.
 
 - **Institution:** University of Canterbury
 - **Supervisors:** Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler
@@ -40,26 +40,27 @@ I play piano, guitar, and kalimba, and have played violin for 18 years. I have p
 
 ### arts and crafts
 
-My other creative endeavours involve knitting, crocheting, sewing, and watercolour painting. In particular, I crocheted a JWST mirror blanket before the launch!
-
+My other creative endeavours involve knitting, crocheting, sewing, and watercolour painting. In particular, I have crocheted a JWST mirror blanket, as well as several star pillows for some astronomer friends. 
 <div class="gallery">
   <figure>
     <a href="{{ '/assets/images/jwst.jpg' | relative_url }}">
       <img src="{{ '/assets/images/jwst.jpg' | relative_url }}" alt="crocheted JWST mirror blanket">
     </a>
-    <figcaption>JWST mirror blanket</figcaption>
   </figure>
   <figure>
     <a href="{{ '/assets/images/star1.jpg' | relative_url }}">
       <img src="{{ '/assets/images/star1.jpg' | relative_url }}" alt="crocheted star cushion">
     </a>
-    <figcaption>A star cushion for a friend!</figcaption>
   </figure>
   <figure>
     <a href="{{ '/assets/images/star2.jpg' | relative_url }}">
-      <img src="{{ '/assets/images/star2.jpg' | relative_url }}" alt="two crocheted star cushions">
+      <img src="{{ '/assets/images/star2.jpg' | relative_url }}" alt="crocheted star cushions">
     </a>
-    <figcaption>More stars for more friends!</figcaption>
+  </figure>
+    <figure>
+    <a href="{{ '/assets/images/star3.jpg' | relative_url }}">
+      <img src="{{ '/assets/images/star3.jpg' | relative_url }}" alt="one crocheted star cushion">
+    </a>
   </figure>
 </div>
 
