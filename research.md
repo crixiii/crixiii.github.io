@@ -5,9 +5,6 @@ permalink: /research/
 ---
 
 # research
-
-My most relevant work models the energy distributions of hyperactive FRBs. It started as a summer project at Swinburne University and was folded into my Masters research at the University of Canterbury, and I have presented it at conferences. The main component of my Masters research was modelling gamma-ray burst afterglows using multiwavelength data. As a side project, I'm developing a method to sonify TESS data in a reliable, easily understood way.
-
 ## publications
 
 1. R. Ridden-Harper, H. Roxburgh, **C. Montilla**, et al., "AT 2020afjz (TSS2020a): The First Fast Extragalactic Transient Discovered by TESS", 2026. [arXiv](https://arxiv.org/abs/2608.17242) · [ADS](https://scixplorer.org/abs/2026arXiv260817242R/abstract)
