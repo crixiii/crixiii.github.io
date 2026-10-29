@@ -13,7 +13,7 @@ body {
   min-height: 100vh;
   font-family: Calibri, Carlito, sans-serif;
   color: white;
-  background: linear-gradient(to bottom, #2a1a8a, #6a4de6 20%, #3d26b0 60%, #22106b);
+  background: linear-gradient(to bottom, #1a1640, #38307a 25%, #292260 60%, #14102e);
   background-attachment: fixed;
 }
 
@@ -40,7 +40,7 @@ main.home {
 
 body.home {
   background:
-    linear-gradient(to bottom, rgba(34, 16, 107, 0) 40%, rgba(34, 16, 107, 0.8)),
+    linear-gradient(to bottom, rgba(20, 16, 46, 0) 40%, rgba(20, 16, 46, 0.8)),
     url("../images/mw.jpg") center / cover fixed;
 }
 
@@ -116,7 +116,7 @@ header {
   align-items: center;
   gap: 8px 24px;
   padding: 10px 20px;
-  background: rgba(34, 16, 107, 0.85);
+  background: rgba(20, 16, 46, 0.88);
   border-bottom: 3px solid var(--mid);
 }
 
@@ -212,5 +212,5 @@ body.home .subtitle {
 }
 
 * {
-  cursor: url("../cursor.svg") 16 16, auto;
+  cursor: url("../cursor.svg") 10 10, auto;
 }
