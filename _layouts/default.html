@@ -11,7 +11,8 @@
   <link rel="icon" type="image/png" href="{{ '/assets/favicon.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 </head>
-<body class="{{ page.class }}">
+{% assign banner = site.data.banners[page.url] %}
+<body class="{{ page.class }}{% if banner %} has-banner{% endif %}">
   <canvas id="stars"></canvas>
 
   <header>
@@ -22,6 +23,10 @@
       <a href="{{ '/research/' | relative_url }}" {% if page.url == '/research/' %}class="current"{% endif %}>research</a>
     </nav>
   </header>
+
+  {% if banner %}
+    <div class="banner" style="background-image: url('{{ '/assets/images/' | append: banner | relative_url }}')"></div>
+  {% endif %}
 
   <main class="{{ page.class }}">
     {{ content }}
