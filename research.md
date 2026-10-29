@@ -36,13 +36,13 @@ permalink: /research/
     <a href="{{ '/assets/posters/poster-2.jpg' | relative_url }}">
       <img src="{{ '/assets/posters/poster-2.jpg' | relative_url }}" alt="poster 2">
     </a>
-    <figcaption>The Neede for Speed, Masters research showcase</figcaption>
+    <figcaption>The Need for Speed, Masters research showcase</figcaption>
   </figure>
   <figure>
     <a href="{{ '/assets/posters/poster-3.jpg' | relative_url }}">
       <img src="{{ '/assets/posters/poster-3.jpg' | relative_url }}" alt="poster 3">
     </a>
-    <figcaption>Finding Fast Transients with  TESS, Honours research presentation</figcaption>
+    <figcaption>Finding the Fastest Explosions with TESS, Honours research presentation</figcaption>
   </figure>
 
   <figure>
