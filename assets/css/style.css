@@ -219,7 +219,11 @@ body.home .subtitle {
 }
 
 * {
-  cursor: url("../cursor.svg") 8 8, auto;
+  cursor: url("../cursor.svg") 14 14, auto;
+}
+
+*:active {
+  cursor: url("../cursor-click.svg") 14 14, auto;
 }
 
 .banner {
