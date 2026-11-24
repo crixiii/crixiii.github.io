@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>frb energy distributions</title>
+<meta name="description" content="Interactive observed burst-energy distributions for different beam shapes and intrinsic energy distributions, running in the browser.">
+<style>
+  :root {
+    --bg: #fdfdfc; --panel: #ffffff; --fg: #1d2127; --muted: #6a727c; --line: #dfe3e8; --grid: #eceff2;
+    --accent: #2563a8; --accent2: #c2570c; --accent3: #2f7d4f; --band: #e3e6ea; --warn: #8a5a00; --err: #b3261e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171b; --panel: #1b1f24; --fg: #e6e9ed; --muted: #98a1ab; --line: #2c333b; --grid: #242a31;
+      --accent: #6aa7e8; --accent2: #f0a05a; --accent3: #6fcf97; --band: #2a3037; --warn: #e6b450; --err: #f2867f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171b; --panel: #1b1f24; --fg: #e6e9ed; --muted: #98a1ab; --line: #2c333b; --grid: #242a31;
+    --accent: #6aa7e8; --accent2: #f0a05a; --accent3: #6fcf97; --band: #2a3037; --warn: #e6b450; --err: #f2867f;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 56px; }
+  h1 { font-size: 1.6rem; font-weight: 600; margin: 0 0 4px; }
+  h2 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: lowercase; color: var(--muted); margin: 0 0 10px; }
+  .lede { color: var(--muted); margin: 0 0 20px; max-width: 70ch; }
+  .layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
+  @media (min-width: 840px) { .layout { grid-template-columns: 300px 1fr; align-items: start; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  label.field { display: block; font-size: 0.85rem; color: var(--muted); margin: 0 0 4px; }
+  select { width: 100%; padding: 7px 8px; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; margin-bottom: 14px; }
+  .group { margin-bottom: 14px; }
+  .group[hidden] { display: none; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.85rem; color: var(--muted); }
+  .row output { color: var(--fg); font-variant-numeric: tabular-nums; }
+  input[type="range"] { width: 100%; accent-color: var(--accent); margin: 2px 0 0; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); margin: -4px 0 12px; }
+  .tab { appearance: none; border: 0; background: none; color: var(--muted); font: inherit; font-size: 0.9rem; padding: 8px 12px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+  .tab:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  #plot { min-height: 280px; position: relative; }
+  #plot svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
+  .loader { display: flex; align-items: center; justify-content: center; min-height: 280px; color: var(--muted); text-align: center; padding: 0 16px; }
+  #readout { min-height: 1.5em; font-size: 0.85rem; color: var(--muted); margin: 6px 0 0; font-variant-numeric: tabular-nums; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-top: 12px; font-size: 0.85rem; }
+  button.btn { font: inherit; font-size: 0.85rem; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+  button.btn:hover { border-color: var(--muted); }
+  button.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .actions label { color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+  #status { font-size: 0.8rem; color: var(--muted); margin: 12px 0 0; min-height: 1.2em; }
+  #status.error { color: var(--err); }
+  #card table { border-collapse: collapse; width: 100%; font-size: 0.9rem; margin-top: 10px; }
+  #card th, #card td { text-align: left; padding: 5px 8px 5px 0; border-bottom: 1px solid var(--line); font-weight: 400; }
+  #card td:nth-child(n+2) { font-variant-numeric: tabular-nums; }
+  .pass { color: var(--accent3); } .fail { color: var(--err); }
+  .caution { color: var(--warn); font-size: 0.85rem; margin: 10px 0 0; }
+  details { margin-top: 20px; }
+  summary { cursor: pointer; color: var(--muted); font-size: 0.9rem; }
+  details p, details li { max-width: 75ch; font-size: 0.92rem; }
+  code { font-size: 0.88em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>frb energy distributions</h1>
+  <p class="lede">How a beam shape turns an intrinsic burst-energy distribution into the one we observe. The calculations run in your browser with python (numpy and scipy), using the same <code>frbbeaming</code> package as the paper.</p>
+
+  <div class="layout">
+    <section class="panel" aria-label="controls">
+      <h2>model</h2>
+      <label class="field" for="beam">beam shape</label>
+      <select id="beam"></select>
+      <label class="field" for="dist">intrinsic energy distribution</label>
+      <select id="dist"></select>
+      <div id="sliders"></div>
+      <div class="actions"><button class="btn" id="reset" type="button">reset to defaults</button><button class="btn" id="share" type="button">copy link</button></div>
+    </section>
+
+    <section class="panel" aria-label="results">
+      <div class="tabs" role="tablist" id="tabs">
+        <button class="tab" role="tab" data-tab="pdf">observed pdf</button>
+        <button class="tab" role="tab" data-tab="profile">beam profile</button>
+        <button class="tab" role="tab" data-tab="hist">simulated bursts</button>
+        <button class="tab" role="tab" data-tab="bimodal">bimodality</button>
+      </div>
+      <div id="plot"><div class="loader" id="loader">starting python… the first visit downloads the python runtime and scipy, so it can take a few seconds.</div></div>
+      <p id="readout" aria-live="polite"></p>
+      <div id="card"></div>
+      <div class="actions" id="actions">
+        <button class="btn" id="pin" type="button">pin curve</button>
+        <button class="btn" id="unpin" type="button">clear pin</button>
+        <label><input type="checkbox" id="logy"> log y-axis</label>
+        <button class="btn" id="download" type="button">download svg</button>
+      </div>
+      <p id="status" role="status"></p>
+    </section>
+  </div>
+
+  <details>
+    <summary>notes and definitions</summary>
+    <ul>
+      <li>The observer angle θ is measured from the beam axis, with isotropically oriented jets so that p(θ) = sin θ / 2. The beam strength is g(θ) = E<sub>obs</sub>/E, and E<sub>obs</sub> = g(θ) E.</li>
+      <li>Densities are probability per dex of E<sub>obs</sub>. The grey band marks energies below E<sub>0</sub> g(r<sub>max</sub>), where a sample is incomplete.</li>
+      <li>Power-law index α &gt; 0 means pdf ∝ E<sup>−(α+1)</sup> above E<sub>0</sub>. The broken power law has indices α<sub>1</sub> and α<sub>2</sub> that cross at the break energy.</li>
+      <li>Relativistic beams (Beniamini 2019) are integrated over the jet's angular structure, so the first use of each new parameter set takes a couple of seconds. Results are cached while you stay on the page.</li>
+      <li>The full bimodality definition needs all of: the Hartigan dip test rejecting unimodality, a two-component Gaussian mixture beating one component by ΔBIC &gt; 10, Ashman's D ≥ 2, and a smaller-component weight ≥ 0.1. The dip test is a compiled package that cannot be installed in the browser, so the bimodality tab applies only the mixture-model criteria on up to 30,000 bursts. Skewed single-peaked distributions (the Gaussian beam, for example) can pass those alone, so treat that tab as a guide and use the full test in the python package for results.</li>
+    </ul>
+  </details>
+</main>
+
+<script>
+"use strict";
+const DEFAULTS = {
+  beam: "R-PL", dist: "lognormal", theta_p: 0.3, gamma_p: 300, sigma: 0.1, zeta: 1.7,
+  lognorm_shape: 1.0, pl_index: 0.7, bpl_alpha1: 0.7, bpl_alpha2: 1.5, bpl_break_log: 41, n_sim: 100000, seed: 0
+};
+const BEAMS = [["Isotropic", "isotropic"], ["Gaussian", "gaussian"], ["Gaussian & Plateau", "gaussian with plateau"],
+  ["Relativistic", "relativistic point source"], ["R-PL", "R-PL (power-law wings)"], ["R-G", "R-G (gaussian)"]];
+const DISTS = [["single", "single energy"], ["lognormal", "log-normal"], ["powerlaw", "power-law"], ["broken_powerlaw", "broken power-law"]];
+const PLATEAU = ["Gaussian & Plateau", "R-PL", "R-G"];
+const GAUSS = ["Gaussian", "Gaussian & Plateau"];
+const CONTROLS = [
+  { id: "theta_p", label: "plateau radius θ_p [rad]", min: 0.05, max: 1.2, step: 0.01, show: (p) => PLATEAU.includes(p.beam) },
+  { id: "sigma", label: "gaussian width σ [rad]", min: 0.02, max: 0.5, step: 0.01, show: (p) => GAUSS.includes(p.beam) },
+  { id: "gamma_p", label: "lorentz factor Γ_p", min: 1, max: 3.5, step: 0.05, log: true, show: (p) => ["Relativistic", "R-PL", "R-G"].includes(p.beam) },
+  { id: "zeta", label: "wing slope ζ", min: 1, max: 4, step: 0.1, show: (p) => p.beam === "R-PL" },
+  { id: "lognorm_shape", label: "log-normal shape s", min: 0.2, max: 2, step: 0.05, show: (p) => p.dist === "lognormal" },
+  { id: "pl_index", label: "power-law index α", min: 0.3, max: 2, step: 0.05, show: (p) => p.dist === "powerlaw" },
+  { id: "bpl_alpha1", label: "index below break α₁", min: 0.3, max: 2, step: 0.05, show: (p) => p.dist === "broken_powerlaw" },
+  { id: "bpl_alpha2", label: "index above break α₂", min: 0.3, max: 3, step: 0.05, show: (p) => p.dist === "broken_powerlaw" },
+  { id: "bpl_break_log", label: "break energy [erg]", min: 40.2, max: 43, step: 0.1, fmt: (v) => "10^" + v.toFixed(1), show: (p) => p.dist === "broken_powerlaw" },
+  { id: "n_sim", label: "simulated bursts", min: 3, max: 5.5, step: 0.1, log: true, fmt: (v) => Math.round(v).toLocaleString("en"), show: (p, tab) => tab === "hist" || tab === "bimodal" },
+];
+const LOGY_DEFAULT = { pdf: false, profile: true, hist: false, bimodal: false };
+const XLIM = [32, 43];
+
+let params = { ...DEFAULTS };
+let tab = "pdf";
+const logy = { ...LOGY_DEFAULT };
+const pinned = {};
+let lastSvg = null;
+
+const $ = (sel) => document.querySelector(sel);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* ---------- worker ---------- */
+const worker = new Worker("worker.js" + location.search);
+let ready = false;
+let nextId = 1;
+const waiting = new Map();
+const cache = new Map();
+
+worker.onmessage = (event) => {
+  const m = event.data;
+  if (m.type === "status") setStatus(m.text);
+  else if (m.type === "ready") { ready = true; setStatus("python ready"); refresh(); }
+  else if (m.type === "fatal") { setStatus("could not start python: " + m.error, true); $("#loader").textContent = "could not start python. check your connection and reload."; }
+  else if (m.type === "result") {
+    const w = waiting.get(m.id);
+    waiting.delete(m.id);
+    if (m.ok) w.resolve(m); else w.reject(new Error(m.error));
+  }
+};
+worker.onerror = (e) => setStatus("worker error: " + e.message, true);
+
+function setStatus(text, isError = false) {
+  const el = $("#status");
+  el.textContent = text;
+  el.classList.toggle("error", isError);
+}
+
+function payload(fn) {
+  const p = { beam: params.beam, dist: params.dist, seed: 0 };
+  for (const k of Object.keys(DEFAULTS)) if (!(k in p)) p[k] = DEFAULTS[k];
+  for (const c of CONTROLS) {
+    if (c.id === "n_sim") continue;
+    if (c.show(params, tab)) p[c.id] = params[c.id];
+  }
+  if (fn === "compute_profile") p.dist = "single";
+  if (fn === "compute_hist" || fn === "compute_bimodality") p.n_sim = Math.round(params.n_sim);
+  return p;
+}
+
+async function getData(fn) {
+  const arg = JSON.stringify(payload(fn));
+  const key = fn + arg;
+  if (cache.has(key)) return cache.get(key);
+  const t0 = performance.now();
+  const res = await new Promise((resolve, reject) => {
+    const id = nextId++;
+    waiting.set(id, { resolve, reject });
+    worker.postMessage({ id, fn, arg });
+  });
+  const data = JSON.parse(res.data);
+  data._ms = performance.now() - t0;
+  cache.set(key, data);
+  return data;
+}
+
+/* ---------- plotting ---------- */
+function niceTicks(lo, hi, n = 5) {
+  const raw = (hi - lo) / n;
+  const mag = 10 ** Math.floor(Math.log10(raw));
+  const f = raw / mag;
+  const step = (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mag;
+  const out = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi + step * 1e-9; v += step) out.push(+v.toPrecision(12));
+  return out;
+}
+function fmtNum(v) {
+  if (v === 0) return "0";
+  const a = Math.abs(v);
+  if (a >= 1000 || a < 0.01) return v.toExponential(0).replace("e+", "e");
+  return String(+v.toPrecision(2));
+}
+const pow10Label = (k) => `10<tspan dy="-5" font-size="9">${k}</tspan>`;
+
+function drawPlot(spec) {
+  const css = getComputedStyle(document.documentElement);
+  const col = (n) => css.getPropertyValue(n).trim();
+  const C = { fg: col("--fg"), mut: col("--muted"), grid: col("--grid"), acc: col("--accent"), acc2: col("--accent2"), acc3: col("--accent3"), band: col("--band"), bg: col("--panel") };
+  const colour = { main: C.acc, pin: C.mut, alt: C.acc2, alt2: C.acc3, band: C.band };
+  const narrow = $("#plot").clientWidth < 520;
+  const W = narrow ? 420 : 640, H = narrow ? 380 : 400, m = narrow ? { l: 58, r: 12, t: 12, b: 50 } : { l: 66, r: 16, t: 14, b: 54 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const [x0, x1] = spec.xlim;
+  const [y0, y1] = spec.ylim;
+  const ylog = !!spec.ylog;
+  const fy = ylog ? (v) => Math.log10(Math.max(v, 1e-300)) : (v) => v;
+  const ly0 = fy(y0), ly1 = fy(y1);
+  const X = (v) => m.l + ((v - x0) / (x1 - x0)) * iw;
+  const Y = (v) => m.t + ih - ((fy(v) - ly0) / (ly1 - ly0)) * ih;
+  const pts = (xs, ys) => xs.map((x, i) => `${X(x).toFixed(1)},${Y(ys[i]).toFixed(1)}`).join(" ");
+
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(spec.title)}" font-family="system-ui, sans-serif" font-size="${narrow ? 14 : 12}">`;
+  s += `<rect width="${W}" height="${H}" fill="${C.bg}"/><clipPath id="clip"><rect x="${m.l}" y="${m.t}" width="${iw}" height="${ih}"/></clipPath>`;
+
+  const yTicks = ylog
+    ? Array.from({ length: Math.floor(ly1) - Math.ceil(ly0) + 1 }, (_, i) => Math.ceil(ly0) + i)
+    : niceTicks(y0, y1);
+  for (const t of yTicks) {
+    const yy = ylog ? Y(10 ** t) : Y(t);
+    s += `<line x1="${m.l}" x2="${W - m.r}" y1="${yy}" y2="${yy}" stroke="${C.grid}"/>`;
+    s += `<text x="${m.l - 8}" y="${yy + 4}" text-anchor="end" fill="${C.mut}">${ylog ? pow10Label(t) : fmtNum(t)}</text>`;
+  }
+  const xTicks = spec.xpow10 ? Array.from({ length: Math.floor(x1 / 2) - Math.ceil(x0 / 2) + 1 }, (_, i) => (Math.ceil(x0 / 2) + i) * 2) : niceTicks(x0, x1);
+  for (const t of xTicks) {
+    s += `<line x1="${X(t)}" x2="${X(t)}" y1="${m.t}" y2="${m.t + ih}" stroke="${C.grid}"/>`;
+    s += `<text x="${X(t)}" y="${m.t + ih + 18}" text-anchor="middle" fill="${C.mut}">${spec.xpow10 ? pow10Label(t) : fmtNum(t)}</text>`;
+  }
+  s += `<rect x="${m.l}" y="${m.t}" width="${iw}" height="${ih}" fill="none" stroke="${C.mut}" stroke-opacity="0.5"/>`;
+  s += `<text x="${m.l + iw / 2}" y="${H - 10}" text-anchor="middle" fill="${C.fg}">${spec.xlabel}</text>`;
+  s += `<text transform="translate(16 ${m.t + ih / 2}) rotate(-90)" text-anchor="middle" fill="${C.fg}">${spec.ylabel}</text>`;
+
+  s += `<g clip-path="url(#clip)">`;
+  for (const L of spec.layers) {
+    const c = colour[L.cls || "main"];
+    if (L.type === "band") s += `<rect x="${X(L.x0)}" y="${m.t}" width="${Math.max(0, X(L.x1) - X(L.x0))}" height="${ih}" fill="${c}" opacity="0.6"/>`;
+    else if (L.type === "vline") s += `<line x1="${X(L.x)}" x2="${X(L.x)}" y1="${m.t}" y2="${m.t + ih}" stroke="${C.mut}" stroke-dasharray="2 3"/>` +
+      (L.label ? `<text x="${X(L.x) + 4}" y="${m.t + 12}" fill="${C.mut}" font-size="11">${L.label}</text>` : "");
+    else if (L.type === "arrow") {
+      const xx = X(L.x), yb = Y(0), yt = Y(L.h);
+      s += `<line x1="${xx}" x2="${xx}" y1="${yb}" y2="${yt + 8}" stroke="${c}" stroke-width="2"/><polygon points="${xx},${yt} ${xx - 5},${yt + 10} ${xx + 5},${yt + 10}" fill="${c}"/>`;
+    } else {
+      const dash = L.cls === "pin" ? ` stroke-dasharray="5 4"` : L.dash ? ` stroke-dasharray="${L.dash}"` : "";
+      if (L.fill) s += `<polygon points="${X(L.x[0])},${Y(y0)} ${pts(L.x, L.y)} ${X(L.x[L.x.length - 1])},${Y(y0)}" fill="${c}" opacity="0.14"/>`;
+      s += `<polyline points="${pts(L.x, L.y)}" fill="none" stroke="${c}" stroke-width="${L.w || 2}"${dash} stroke-linejoin="round"/>`;
+    }
+  }
+  s += `</g>`;
+
+  let ly = m.t + 18;
+  const lx = spec.legendRight ? W - m.r - 205 : m.l + 10;
+  for (const e of spec.legend || []) {
+    s += `<line x1="${lx}" x2="${lx + 20}" y1="${ly - 4}" y2="${ly - 4}" stroke="${colour[e.cls]}" stroke-width="2"${e.cls === "pin" ? ' stroke-dasharray="5 4"' : ""}/><text x="${lx + 26}" y="${ly}" fill="${C.fg}" font-size="11">${e.label}</text>`;
+    ly += 16;
+  }
+  s += `<circle id="cross" r="4" fill="${C.acc}" stroke="${C.bg}" stroke-width="1.5" visibility="hidden"/></svg>`;
+
+  const host = $("#plot");
+  host.innerHTML = s;
+  lastSvg = host.firstElementChild;
+  const svg = lastSvg;
+  if (spec.hover) {
+    const hx = spec.hover.x, hy = spec.hover.y;
+    const move = (ev) => {
+      const r = svg.getBoundingClientRect();
+      const px = ((ev.clientX - r.left) / r.width) * W;
+      const xv = x0 + ((px - m.l) / iw) * (x1 - x0);
+      let lo = 0, hi = hx.length - 1;
+      while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (hx[mid] < xv) lo = mid; else hi = mid; }
+      const i = Math.abs(hx[lo] - xv) < Math.abs(hx[hi] - xv) ? lo : hi;
+      const cross = svg.querySelector("#cross");
+      if (xv < x0 || xv > x1) { cross.setAttribute("visibility", "hidden"); return; }
+      cross.setAttribute("cx", X(hx[i])); cross.setAttribute("cy", Y(hy[i])); cross.setAttribute("visibility", "visible");
+      $("#readout").textContent = `${spec.hover.xname} = ${hx[i].toPrecision(4)},  ${spec.hover.yname} = ${hy[i].toExponential(3)}`;
+    };
+    svg.addEventListener("pointermove", move);
+    svg.addEventListener("pointerleave", () => { svg.querySelector("#cross").setAttribute("visibility", "hidden"); });
+  }
+}
+
+function stepXY(edges, dens, floor) {
+  const x = [], y = [];
+  for (let i = 0; i < dens.length; i++) { const d = dens[i] > 0 ? dens[i] : floor; x.push(edges[i], edges[i + 1]); y.push(d, d); }
+  return { x, y };
+}
+const maxOf = (a) => a.reduce((m, v) => (v > m ? v : m), -Infinity);
+const minPos = (a) => a.reduce((m, v) => (v > 0 && v < m ? v : m), Infinity);
+
+function yRange(top, log) {
+  if (log) { const t = top * 3; return [t / 1e6, t]; }
+  return [0, top * 1.1];
+}
+
+function withPin(layers, legend, main) {
+  const p = pinned[tab];
+  if (p) { layers.unshift({ ...p, cls: "pin", fill: false }); legend.push({ cls: "pin", label: "pinned" }); }
+  return { x: main.x, y: main.y, type: main.type };
+}
+
+/* ---------- views ---------- */
+let currentMain = null;
+
+async function viewPdf() {
+  const d = await getData("compute_pdf");
+  const layers = [], legend = [];
+  const log = logy.pdf;
+  const bandTo = Math.min(d.cut, XLIM[1]);
+  if (bandTo > XLIM[0]) layers.push({ type: "band", x0: XLIM[0], x1: bandTo, cls: "band" });
+  layers.push({ type: "vline", x: d.e0, label: "E₀" });
+  let spec;
+  if (d.kind === "delta") {
+    layers.push({ type: "arrow", x: d.e0, h: 1 });
+    spec = { title: "all bursts at E0", xlim: XLIM, ylim: [0, 1.1], xpow10: true, xlabel: "E<tspan dy='3' font-size='9'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend: [] };
+    currentMain = null;
+    $("#readout").textContent = "an isotropic beam with a single energy gives a delta function at E₀.";
+  } else {
+    const range = yRange(maxOf(d.y), log);
+    const main = withPin(layers, legend, { x: d.x, y: d.y });
+    layers.push({ type: "line", x: d.x, y: log ? d.y.map((v) => Math.max(v, range[0] / 10)) : d.y, cls: "main", fill: true });
+    currentMain = { x: d.x, y: d.y };
+    spec = { title: "observed energy pdf", xlim: XLIM, ylim: range, ylog: log, xpow10: true, xlabel: "E<tspan dy='3' font-size='9'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend,
+      hover: { x: d.x, y: d.y, xname: "log10 E_obs", yname: "pdf/dex" } };
+    const notes = [];
+    if (d.total != null) notes.push(`∫ pdf = ${d.total.toFixed(4)} (normalisation check)`);
+    if (d.mass != null && d.mass > 1e-4) notes.push(`${(100 * d.mass).toFixed(1)}% of bursts sit in a point mass at E₀ (the plateau)`);
+    $("#readout").textContent = notes.join("  ·  ");
+  }
+  drawPlot(spec);
+  setStatus(`python ready · computed in ${(d._ms / 1000).toFixed(2)} s`);
+}
+
+async function viewProfile() {
+  const d = await getData("compute_profile");
+  const log = logy.profile;
+  const layers = [], legend = [];
+  if (d.edge != null) layers.push({ type: "vline", x: d.edge, label: "θ_p" });
+  let range = [0, 1.1];
+  if (log) { const lo = Math.max(1e-12, 10 ** Math.floor(Math.log10(Math.max(minPos(d.g), 1e-12)))); range = [Math.max(lo, 1e-6), 2]; }
+  if (d.emitted) { layers.push({ type: "line", x: d.theta, y: d.emitted, cls: "alt", dash: "5 4", w: 1.5 }); legend.push({ cls: "alt", label: "emitted energy (jet frame)" }); }
+  withPin(layers, legend, { x: d.theta, y: d.g });
+  layers.push({ type: "line", x: d.theta, y: d.g, cls: "main" });
+  legend.push({ cls: "main", label: "beam strength g(θ) = E_obs / E" });
+  currentMain = { x: d.theta, y: d.g };
+  drawPlot({ title: "beam strength against observer angle", xlim: [0, Math.PI], ylim: range, ylog: log, xlabel: "observer angle θ [rad]", ylabel: "E<tspan dy='3' font-size='9'>obs</tspan><tspan dy='-3'>/E</tspan>", layers, legend, legendRight: true,
+    hover: { x: d.theta, y: d.g, xname: "θ [rad]", yname: "g" } });
+  $("#readout").textContent = "";
+  setStatus(`python ready · computed in ${(d._ms / 1000).toFixed(2)} s`);
+}
+
+async function viewHist() {
+  const h = await getData("compute_hist");
+  const log = logy.hist;
+  const layers = [], legend = [];
+  const top = Math.max(maxOf(h.density), 1e-9);
+  const range = yRange(top, log);
+  const bandTo = Math.min(h.cut, XLIM[1]);
+  if (bandTo > XLIM[0]) layers.push({ type: "band", x0: XLIM[0], x1: bandTo, cls: "band" });
+  layers.push({ type: "vline", x: h.e0, label: "E₀" });
+  const st = stepXY(h.edges, h.density, range[0] / 10);
+  withPin(layers, legend, st);
+  layers.push({ type: "line", x: st.x, y: st.y, cls: "main", fill: true, w: 1.5 });
+  legend.push({ cls: "main", label: `simulated, ${h.n.toLocaleString("en")} bursts` });
+  if (params.dist !== "single") {
+    const d = await getData("compute_pdf");
+    if (d.kind === "curve") { layers.push({ type: "line", x: d.x, y: log ? d.y.map((v) => Math.max(v, range[0] / 10)) : d.y, cls: "alt", w: 1.5 }); legend.push({ cls: "alt", label: "numerical pdf" }); }
+  }
+  currentMain = { x: st.x, y: st.y };
+  drawPlot({ title: "simulated observed energies", xlim: XLIM, ylim: range, ylog: log, xpow10: true, xlabel: "E<tspan dy='3' font-size='9'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend,
+    hover: { x: st.x, y: st.y, xname: "log10 E_obs", yname: "density/dex" } });
+  $("#readout").textContent = h.below > 0 ? `${(100 * h.below).toFixed(1)}% of simulated bursts fall below 10^${XLIM[0]} erg and are off the left of the plot.` : "";
+  setStatus(`python ready · computed in ${(h._ms / 1000).toFixed(2)} s`);
+}
+
+let bimodalRequested = false;
+async function viewBimodal() {
+  const card = $("#card");
+  const key = "compute_bimodality" + JSON.stringify(payload("compute_bimodality"));
+  if (!cache.has(key) && !bimodalRequested) {
+    $("#plot").innerHTML = `<div class="loader"><button class="btn primary" id="runBimodal" type="button">run bimodality test</button></div>`;
+    $("#runBimodal").onclick = () => { bimodalRequested = true; refresh(); };
+    card.innerHTML = "";
+    $("#readout").textContent = "fits one and two gaussians to the simulated log10 E_obs above the incompleteness cut. loads scikit-learn on first use.";
+    return;
+  }
+  bimodalRequested = false;
+  $("#plot").innerHTML = `<div class="loader">fitting mixture models…</div>`;
+  const b = await getData("compute_bimodality");
+  if (b.degenerate) {
+    $("#plot").innerHTML = `<div class="loader">this combination is a delta function (or has too few bursts above the cut), so there is nothing to test.</div>`;
+    card.innerHTML = "";
+    return;
+  }
+  const r = b.result;
+  const log = logy.bimodal;
+  const lo = b.edges[0], hi = b.edges[b.edges.length - 1];
+  const top = Math.max(maxOf(b.density), 1e-9);
+  const range = yRange(top, log);
+  const st = stepXY(b.edges, b.density, range[0] / 10);
+  const layers = [], legend = [];
+  withPin(layers, legend, st);
+  layers.push({ type: "line", x: st.x, y: st.y, cls: "main", fill: true, w: 1.5 });
+  legend.push({ cls: "main", label: "simulated sample" });
+  b.components.forEach((c, i) => {
+    layers.push({ type: "line", x: c.x, y: log ? c.y.map((v) => Math.max(v, range[0] / 10)) : c.y, cls: i ? "alt2" : "alt", w: 1.5 });
+    legend.push({ cls: i ? "alt2" : "alt", label: `component ${i + 1}` });
+  });
+  currentMain = { x: st.x, y: st.y };
+  drawPlot({ title: "two-component gaussian mixture fit", xlim: [lo, hi], ylim: range, ylog: log, xlabel: "log₁₀ E<tspan dy='3' font-size='9'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend });
+  const ok = (v) => (v ? '<span class="pass">pass</span>' : '<span class="fail">fail</span>');
+  const f = (v, n = 2) => Number(v).toFixed(n);
+  card.innerHTML = `<table>
+    <tr><th>criterion</th><th>value</th><th>needs</th><th></th></tr>
+    <tr><td>ΔBIC (1 → 2 components)</td><td>${f(r.dbic, 1)}</td><td>&gt; 10</td><td>${ok(r.dbic > 10)}</td></tr>
+    <tr><td>Ashman's D</td><td>${f(r.D)}</td><td>≥ 2</td><td>${ok(r.D >= 2)}</td></tr>
+    <tr><td>smaller component weight</td><td>${f(r.w_min)}</td><td>≥ 0.10</td><td>${ok(r.w_min >= 0.1)}</td></tr>
+    <tr><td>Hartigan dip test</td><td colspan="3">not available in the browser</td></tr>
+    <tr><td>components (μ, σ, weight)</td><td colspan="3">${r.means.map((mu, i) => `(${f(mu)}, ${f(r.stds[i])}, ${f(r.weights[i])})`).join(" &nbsp; ")}</td></tr>
+  </table>
+  <p>mixture-model criteria: ${ok(r.bimodal)} on ${b.n.toLocaleString("en")} bursts</p>
+  <p class="caution">without the dip test this over-flags skewed single-peaked distributions. use the python package's full test before drawing conclusions.</p>`;
+  $("#readout").textContent = "";
+  setStatus(`python ready · computed in ${(b._ms / 1000).toFixed(2)} s`);
+}
+
+/* ---------- controls ---------- */
+function buildControls() {
+  const beam = $("#beam"), dist = $("#dist");
+  BEAMS.forEach(([v, t]) => beam.add(new Option(t, v)));
+  DISTS.forEach(([v, t]) => dist.add(new Option(t, v)));
+  const host = $("#sliders");
+  host.innerHTML = "";
+  for (const c of CONTROLS) {
+    const g = document.createElement("div");
+    g.className = "group"; g.id = "g_" + c.id;
+    g.innerHTML = `<div class="row"><label for="s_${c.id}">${c.label}</label><output id="o_${c.id}"></output></div><input type="range" id="s_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}">`;
+    host.appendChild(g);
+    g.querySelector("input").addEventListener("input", (e) => {
+      const v = +e.target.value;
+      params[c.id] = c.log ? 10 ** v : v;
+      if (c.id === "n_sim") params.n_sim = Math.round(params.n_sim);
+      syncControls(false);
+      refresh(120);
+    });
+  }
+  beam.onchange = () => { params.beam = beam.value; syncControls(); refresh(); };
+  dist.onchange = () => { params.dist = dist.value; syncControls(); refresh(); };
+}
+
+function syncControls(setSliders = true) {
+  $("#beam").value = params.beam;
+  $("#dist").value = params.dist;
+  for (const c of CONTROLS) {
+    $("#g_" + c.id).hidden = !c.show(params, tab);
+    const val = params[c.id];
+    $("#o_" + c.id).textContent = c.fmt ? c.fmt(val) : +(+val).toPrecision(3);
+    if (setSliders) $("#s_" + c.id).value = c.log ? Math.log10(val) : val;
+  }
+  $("#logy").checked = logy[tab];
+  document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", t.dataset.tab === tab));
+}
+
+/* ---------- refresh loop ---------- */
+let running = false, dirty = false, timer = null;
+function refresh(delay = 0) {
+  clearTimeout(timer);
+  $("#plot").dataset.busy = "1";
+  timer = setTimeout(() => { dirty = true; if (!running) loop(); }, delay);
+  saveHash();
+}
+async function loop() {
+  if (!ready) return;
+  running = true;
+  while (dirty) {
+    dirty = false;
+    $("#card").innerHTML = tab === "bimodal" ? $("#card").innerHTML : "";
+    try {
+      setStatus(["Relativistic", "R-PL", "R-G"].includes(params.beam) ? "computing… relativistic beams take a few seconds the first time" : "computing…");
+      if (tab === "pdf") await viewPdf();
+      else if (tab === "profile") { $("#card").innerHTML = ""; await viewProfile(); }
+      else if (tab === "hist") await viewHist();
+      else await viewBimodal();
+    } catch (err) {
+      setStatus("error: " + err.message, true);
+    }
+  }
+  running = false;
+  delete $("#plot").dataset.busy;
+}
+
+/* ---------- state in the url ---------- */
+function saveHash() {
+  try { history.replaceState(null, "", "#" + encodeURIComponent(JSON.stringify({ t: tab, p: params }))); } catch (_) { /* ignore */ }
+}
+function loadHash() {
+  try {
+    const s = JSON.parse(decodeURIComponent(location.hash.slice(1)));
+    if (s.p) for (const k of Object.keys(DEFAULTS)) if (typeof s.p[k] === typeof DEFAULTS[k]) params[k] = s.p[k];
+    if (["pdf", "profile", "hist", "bimodal"].includes(s.t)) tab = s.t;
+  } catch (_) { /* no saved state */ }
+}
+
+/* ---------- wiring ---------- */
+$("#tabs").addEventListener("click", (e) => {
+  const t = e.target.closest(".tab");
+  if (!t) return;
+  tab = t.dataset.tab; syncControls(); $("#readout").textContent = ""; refresh();
+});
+$("#logy").addEventListener("change", (e) => { logy[tab] = e.target.checked; refresh(); });
+$("#pin").addEventListener("click", () => { if (currentMain) { pinned[tab] = { type: "line", x: currentMain.x, y: currentMain.y }; refresh(); } });
+$("#unpin").addEventListener("click", () => { delete pinned[tab]; refresh(); });
+$("#reset").addEventListener("click", () => { params = { ...DEFAULTS }; syncControls(); refresh(); });
+$("#share").addEventListener("click", async () => {
+  saveHash();
+  try { await navigator.clipboard.writeText(location.href); setStatus("link copied"); } catch (_) { setStatus("copy the address bar to share this view"); }
+});
+$("#download").addEventListener("click", () => {
+  if (!lastSvg) return;
+  const blob = new Blob([new XMLSerializer().serializeToString(lastSvg)], { type: "image/svg+xml" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = `frb-${tab}-${params.beam}-${params.dist}.svg`.replace(/[^\w.-]+/g, "_");
+  a.click(); URL.revokeObjectURL(a.href);
+});
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => refresh());
+
+loadHash();
+buildControls();
+syncControls();
+</script>
+</body>
+</html>
