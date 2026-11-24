@@ -98,16 +98,16 @@ const DISTS = [["single", "single energy"], ["lognormal", "log-normal"], ["power
 const PLATEAU = ["Gaussian & Plateau", "R-PL", "R-G"];
 const GAUSS = ["Gaussian", "Gaussian & Plateau"];
 const CONTROLS = [
-  { id: "theta_p", label: "plateau radius θ_p [rad]", min: 0.05, max: 1.2, step: 0.01, show: (p) => PLATEAU.includes(p.beam) },
-  { id: "sigma", label: "gaussian width σ [rad]", min: 0.02, max: 0.5, step: 0.01, show: (p) => GAUSS.includes(p.beam) },
-  { id: "gamma_p", label: "lorentz factor Γ_p", min: 1, max: 3.5, step: 0.05, log: true, show: (p) => ["Relativistic", "R-PL", "R-G"].includes(p.beam) },
-  { id: "zeta", label: "wing slope ζ", min: 1, max: 4, step: 0.1, show: (p) => p.beam === "R-PL" },
-  { id: "lognorm_shape", label: "log-normal shape s", min: 0.2, max: 2, step: 0.05, show: (p) => p.dist === "lognormal" },
+  { id: "theta_p", label: "plateau radius θ_p [rad]", min: 0.01, max: 1, step: 0.01, show: (p) => PLATEAU.includes(p.beam) },
+  { id: "sigma", label: "gaussian width σ [rad]", min: 0.02, max: 0.9, step: 0.01, show: (p) => GAUSS.includes(p.beam) },
+  { id: "gamma_p", label: "lorentz factor Γ_p", min: 1, max: 10, step: 0.05, log: true, show: (p) => ["Relativistic", "R-PL", "R-G"].includes(p.beam) },
+  { id: "zeta", label: "wing slope ζ", min: 1, max: 3, step: 0.1, show: (p) => p.beam === "R-PL" },
+  { id: "lognorm_shape", label: "log-normal shape s", min: 0.01, max: 1, step: 0.05, show: (p) => p.dist === "lognormal" },
   { id: "pl_index", label: "power-law index α", min: 0.3, max: 2, step: 0.05, show: (p) => p.dist === "powerlaw" },
   { id: "bpl_alpha1", label: "index below break α₁", min: 0.3, max: 2, step: 0.05, show: (p) => p.dist === "broken_powerlaw" },
   { id: "bpl_alpha2", label: "index above break α₂", min: 0.3, max: 3, step: 0.05, show: (p) => p.dist === "broken_powerlaw" },
-  { id: "bpl_break_log", label: "break energy [erg]", min: 40.2, max: 43, step: 0.1, fmt: (v) => "10^" + v.toFixed(1), show: (p) => p.dist === "broken_powerlaw" },
-  { id: "n_sim", label: "simulated bursts", min: 3, max: 5.5, step: 0.1, log: true, fmt: (v) => Math.round(v).toLocaleString("en"), show: (p, tab) => tab === "hist" || tab === "bimodal" },
+  { id: "bpl_break_log", label: "break energy [erg]", min: 38, max: 45, step: 0.1, fmt: (v) => "10^" + v.toFixed(1), show: (p) => p.dist === "broken_powerlaw" },
+  { id: "n_sim", label: "simulated bursts", min: 3, max: 7.5, step: 0.1, log: true, fmt: (v) => Math.round(v).toLocaleString("en"), show: (p, tab) => tab === "hist" || tab === "bimodal" },
 ];
 const LOGY_DEFAULT = { pdf: false, profile: true, hist: false, bimodal: false };
 const XLIM = [32, 43];
@@ -432,13 +432,39 @@ function buildControls() {
   for (const c of CONTROLS) {
     const g = document.createElement("div");
     g.className = "group"; g.id = "g_" + c.id;
-    g.innerHTML = `<div class="row"><label for="s_${c.id}">${c.label}</label><output id="o_${c.id}"></output></div><input type="range" id="s_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}">`;
+    g.innerHTML = `
+      <div class="row">
+        <label for="s_${c.id}">${c.label}</label>
+        <input type="number" id="n_${c.id}" min="${c.log ? 10 ** c.min : c.min}" max="${c.log ? 10 ** c.max : c.max}" step="${c.log ? "any" : c.step}">
+      </div>
+      <input type="range" id="s_${c.id}" min="${c.min}" max="${c.max}" step="${c.step}">
+    `;
     host.appendChild(g);
-    g.querySelector("input").addEventListener("input", (e) => {
-      const v = +e.target.value;
+    
+    const slider = g.querySelector(`#s_${c.id}`);
+    const number = g.querySelector(`#n_${c.id}`);
+    
+    slider.addEventListener("input", () => {
+      const v = +slider.value;
       params[c.id] = c.log ? 10 ** v : v;
       if (c.id === "n_sim") params.n_sim = Math.round(params.n_sim);
       syncControls(false);
+      refresh(120);
+    });
+    
+    number.addEventListener("change", () => {
+      let v = Number(number.value);
+    
+      if (number.value === "" || !Number.isFinite(v)) {
+        syncControls(); return;}    
+      const min = c.log ? 10 ** c.min : c.min;
+      const max = c.log ? 10 ** c.max : c.max;
+    
+      v = Math.max(min, Math.min(max, v));
+      if (c.id === "n_sim") v = Math.round(v);
+    
+      params[c.id] = v;
+      syncControls();
       refresh(120);
     });
   }
@@ -449,14 +475,24 @@ function buildControls() {
 function syncControls(setSliders = true) {
   $("#beam").value = params.beam;
   $("#dist").value = params.dist;
+
   for (const c of CONTROLS) {
     $("#g_" + c.id).hidden = !c.show(params, tab);
+
     const val = params[c.id];
-    $("#o_" + c.id).textContent = c.fmt ? c.fmt(val) : +(+val).toPrecision(3);
-    if (setSliders) $("#s_" + c.id).value = c.log ? Math.log10(val) : val;
+
+    $("#n_" + c.id).value = c.fmt ? c.fmt(val) : +(+val).toPrecision(6);
+
+    if (setSliders) {
+      $("#s_" + c.id).value = c.log ? Math.log10(val) : val;
+    }
   }
+
   $("#logy").checked = logy[tab];
-  document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", t.dataset.tab === tab));
+
+  document.querySelectorAll(".tab").forEach((t) =>
+    t.setAttribute("aria-selected", t.dataset.tab === tab)
+  );
 }
 
 /* ---------- refresh loop ---------- */
