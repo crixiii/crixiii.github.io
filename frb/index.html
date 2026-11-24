@@ -111,7 +111,7 @@ const GAUSS = ["Gaussian", "Gaussian & Plateau"];
 const CONTROLS = [
   { id: "theta_p", label: "plateau radius θ_p [rad]", min: 0.01, max: 1, step: 0.01, show: (p) => PLATEAU.includes(p.beam) },
   { id: "sigma", label: "gaussian width σ [rad]", min: 0.02, max: 0.9, step: 0.01, show: (p) => GAUSS.includes(p.beam) },
-  { id: "gamma_p", label: "lorentz factor Γ_p", min: 1, max: 10, step: 0.05, log: true, show: (p) => ["Relativistic", "R-PL", "R-G"].includes(p.beam) },
+  { id: "gamma_p", label: "lorentz factor Γ_p", min: 1, max: 4, step: 0.05, log: true, show: (p) => ["Relativistic", "R-PL", "R-G"].includes(p.beam) },
   { id: "zeta", label: "wing slope ζ", min: 1, max: 3, step: 0.1, show: (p) => p.beam === "R-PL" },
   { id: "lognorm_shape", label: "log-normal shape s", min: 0.01, max: 1, step: 0.05, show: (p) => p.dist === "lognormal" },
   { id: "pl_index", label: "power-law index α", min: 0.3, max: 2, step: 0.05, show: (p) => p.dist === "powerlaw" },
