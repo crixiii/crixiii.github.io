@@ -21,8 +21,12 @@ title: frb energies
   .frb-app .group { margin-bottom: 14px; }
   .frb-app .group[hidden] { display: none; }
   .frb-app .row { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.95rem; color: var(--muted); }
-  .frb-app .row output { color: var(--fg); font-variant-numeric: tabular-nums; }
-  .frb-app input[type="range"] { width: 100%; accent-color: var(--mid); margin: 2px 0 0; }
+  .frb-app .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .frb-app .row output { display: none; }
+  .frb-app .row input[type="number"] {width: 90px; padding: 4px 6px; font: inherit; font-size: 0.9rem;
+      color: var(--fg); font-variant-numeric: tabular-nums; background: var(--field);
+      border: 2px solid var(--mid); border-radius: 0; text-align: right;}
+  .frb-app input[type="range"] { width: 100%; accent-color: var(--mid); margin: 6px 0 0; }
   .frb-app .tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 3px solid var(--mid); margin: -4px 0 14px; }
   .frb-app .tab { appearance: none; border: 0; background: none; color: var(--mid); font-family: "Pixelify Sans", monospace; font-size: 1.05rem; padding: 8px 12px; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -3px; }
   .frb-app .tab:hover { color: var(--fg); }
@@ -49,7 +53,7 @@ title: frb energies
   .frb-app .caution { color: var(--warn); font-size: 0.95rem; margin: 10px 0 0; }
 </style>
 <div class="frb-app">
-  <h1>frb energy distributions</h1>
+  <h1>Beamed Energy Distributions</h1>
   <div class="layout">
     <section class="panel" aria-label="controls">
       <h2>model</h2>
