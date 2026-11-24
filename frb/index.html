@@ -1,72 +1,55 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>frb energy distributions</title>
-<meta name="description" content="Interactive observed burst-energy distributions for different beam shapes and intrinsic energy distributions, running in the browser.">
-<style>
-  :root {
-    --bg: #fdfdfc; --panel: #ffffff; --fg: #1d2127; --muted: #6a727c; --line: #dfe3e8; --grid: #eceff2;
-    --accent: #2563a8; --accent2: #c2570c; --accent3: #2f7d4f; --band: #e3e6ea; --warn: #8a5a00; --err: #b3261e;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #14171b; --panel: #1b1f24; --fg: #e6e9ed; --muted: #98a1ab; --line: #2c333b; --grid: #242a31;
-      --accent: #6aa7e8; --accent2: #f0a05a; --accent3: #6fcf97; --band: #2a3037; --warn: #e6b450; --err: #f2867f;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #14171b; --panel: #1b1f24; --fg: #e6e9ed; --muted: #98a1ab; --line: #2c333b; --grid: #242a31;
-    --accent: #6aa7e8; --accent2: #f0a05a; --accent3: #6fcf97; --band: #2a3037; --warn: #e6b450; --err: #f2867f;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 56px; }
-  h1 { font-size: 1.6rem; font-weight: 600; margin: 0 0 4px; }
-  h2 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: lowercase; color: var(--muted); margin: 0 0 10px; }
-  .lede { color: var(--muted); margin: 0 0 20px; max-width: 70ch; }
-  .layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
-  @media (min-width: 840px) { .layout { grid-template-columns: 300px 1fr; align-items: start; } }
-  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
-  label.field { display: block; font-size: 0.85rem; color: var(--muted); margin: 0 0 4px; }
-  select { width: 100%; padding: 7px 8px; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; margin-bottom: 14px; }
-  .group { margin-bottom: 14px; }
-  .group[hidden] { display: none; }
-  .row { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.85rem; color: var(--muted); }
-  .row output { color: var(--fg); font-variant-numeric: tabular-nums; }
-  input[type="range"] { width: 100%; accent-color: var(--accent); margin: 2px 0 0; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); margin: -4px 0 12px; }
-  .tab { appearance: none; border: 0; background: none; color: var(--muted); font: inherit; font-size: 0.9rem; padding: 8px 12px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-  .tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
-  .tab:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  #plot { min-height: 280px; position: relative; }
-  #plot svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
-  .loader { display: flex; align-items: center; justify-content: center; min-height: 280px; color: var(--muted); text-align: center; padding: 0 16px; }
-  #readout { min-height: 1.5em; font-size: 0.85rem; color: var(--muted); margin: 6px 0 0; font-variant-numeric: tabular-nums; }
-  .actions { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-top: 12px; font-size: 0.85rem; }
-  button.btn { font: inherit; font-size: 0.85rem; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
-  button.btn:hover { border-color: var(--muted); }
-  button.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .actions label { color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
-  #status { font-size: 0.8rem; color: var(--muted); margin: 12px 0 0; min-height: 1.2em; }
-  #status.error { color: var(--err); }
-  #card table { border-collapse: collapse; width: 100%; font-size: 0.9rem; margin-top: 10px; }
-  #card th, #card td { text-align: left; padding: 5px 8px 5px 0; border-bottom: 1px solid var(--line); font-weight: 400; }
-  #card td:nth-child(n+2) { font-variant-numeric: tabular-nums; }
-  .pass { color: var(--accent3); } .fail { color: var(--err); }
-  .caution { color: var(--warn); font-size: 0.85rem; margin: 10px 0 0; }
-  details { margin-top: 20px; }
-  summary { cursor: pointer; color: var(--muted); font-size: 0.9rem; }
-  details p, details li { max-width: 75ch; font-size: 0.92rem; }
-  code { font-size: 0.88em; }
-</style>
-</head>
-<body>
-<main>
-  <h1>frb energy distributions</h1>
-  <p class="lede">How a beam shape turns an intrinsic burst-energy distribution into the one we observe. The calculations run in your browser with python (numpy and scipy), using the same <code>frbbeaming</code> package as the paper.</p>
+---
+layout: default
+title: frb energies
+---
 
+{% raw %}
+<style>
+  .frb-app {
+    --fg: #ffffff; --muted: #b4a8f5; --grid: rgba(201, 188, 255, 0.14); --accent: #c9bcff; --accent2: #ffb86b; --accent3: #6fe3c1;
+    --band: #6a5fc4; --plot: #17133a; --panel: rgba(20, 16, 46, 0.82); --field: #14102e; --warn: #ffd479; --err: #ff9a9a;
+    --light: #c9bcff; --mid: #8d7df0;
+  }
+  .frb-app * { box-sizing: border-box; }
+  .frb-app h1 { margin: 0 0 24px; }
+  .frb-app h2 { font-size: 1rem; letter-spacing: 0.04em; color: var(--light); margin: 0 0 12px; }
+  .frb-app .layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
+  @media (min-width: 840px) { .frb-app .layout { grid-template-columns: 300px 1fr; align-items: start; } }
+  .frb-app .panel { background: var(--panel); border: 3px solid var(--mid); padding: 16px; }
+  .frb-app label.field { display: block; font-size: 0.95rem; color: var(--muted); margin: 0 0 4px; }
+  .frb-app select { width: 100%; padding: 7px 8px; font: inherit; font-size: 1rem; color: var(--fg); background: var(--field); border: 2px solid var(--mid); border-radius: 0; margin-bottom: 14px; }
+  .frb-app .group { margin-bottom: 14px; }
+  .frb-app .group[hidden] { display: none; }
+  .frb-app .row { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.95rem; color: var(--muted); }
+  .frb-app .row output { color: var(--fg); font-variant-numeric: tabular-nums; }
+  .frb-app input[type="range"] { width: 100%; accent-color: var(--mid); margin: 2px 0 0; }
+  .frb-app .tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 3px solid var(--mid); margin: -4px 0 14px; }
+  .frb-app .tab { appearance: none; border: 0; background: none; color: var(--mid); font-family: "Pixelify Sans", monospace; font-size: 1.05rem; padding: 8px 12px; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -3px; }
+  .frb-app .tab:hover { color: var(--fg); }
+  .frb-app .tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--fg); }
+  .frb-app .tab:focus-visible, .frb-app button:focus-visible, .frb-app select:focus-visible, .frb-app input:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+  .frb-app #plot { min-height: 280px; position: relative; }
+  .frb-app #plot svg { display: block; width: 100%; height: auto; touch-action: pan-y; border: 2px solid var(--mid); }
+  .frb-app .loader { display: flex; align-items: center; justify-content: center; min-height: 280px; color: var(--muted); text-align: center; padding: 0 16px; }
+  .frb-app #readout { min-height: 1.5em; font-size: 0.95rem; color: var(--muted); margin: 8px 0 0; font-variant-numeric: tabular-nums; }
+  .frb-app .actions { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-top: 12px; font-size: 0.95rem; }
+  .frb-app button.btn { font-family: "Pixelify Sans", monospace; font-size: 0.95rem; color: var(--light); background: transparent; border: 2px solid var(--mid); border-radius: 0; padding: 5px 10px; cursor: pointer; }
+  .frb-app button.btn:hover { color: var(--fg); border-color: var(--fg); }
+  .frb-app button.btn.primary { background: var(--mid); border-color: var(--mid); color: #14102e; }
+  .frb-app button.btn.primary:hover { background: var(--light); border-color: var(--light); color: #14102e; }
+  .frb-app .actions label { color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+  .frb-app #status { font-size: 0.9rem; color: var(--muted); margin: 12px 0 0; min-height: 1.2em; }
+  .frb-app #status.error { color: var(--err); }
+  .frb-app #card table { border-collapse: collapse; width: 100%; font-size: 1rem; margin-top: 10px; }
+  .frb-app #card th, .frb-app #card td { text-align: left; padding: 5px 8px 5px 0; border-bottom: 1px solid rgba(141, 125, 240, 0.4); font-weight: 400; }
+  .frb-app #card th { color: var(--muted); }
+  .frb-app #card td:nth-child(n+2) { font-variant-numeric: tabular-nums; }
+  .frb-app #card p { font-size: 1rem; }
+  .frb-app .pass { color: var(--accent3); } .frb-app .fail { color: var(--err); }
+  .frb-app .caution { color: var(--warn); font-size: 0.95rem; margin: 10px 0 0; }
+</style>
+<div class="frb-app">
+  <h1>frb energy distributions</h1>
   <div class="layout">
     <section class="panel" aria-label="controls">
       <h2>model</h2>
@@ -98,18 +81,7 @@
     </section>
   </div>
 
-  <details>
-    <summary>notes and definitions</summary>
-    <ul>
-      <li>The observer angle θ is measured from the beam axis, with isotropically oriented jets so that p(θ) = sin θ / 2. The beam strength is g(θ) = E<sub>obs</sub>/E, and E<sub>obs</sub> = g(θ) E.</li>
-      <li>Densities are probability per dex of E<sub>obs</sub>. The grey band marks energies below E<sub>0</sub> g(r<sub>max</sub>), where a sample is incomplete.</li>
-      <li>Power-law index α &gt; 0 means pdf ∝ E<sup>−(α+1)</sup> above E<sub>0</sub>. The broken power law has indices α<sub>1</sub> and α<sub>2</sub> that cross at the break energy.</li>
-      <li>Relativistic beams (Beniamini 2019) are integrated over the jet's angular structure, so the first use of each new parameter set takes a couple of seconds. Results are cached while you stay on the page.</li>
-      <li>The full bimodality definition needs all of: the Hartigan dip test rejecting unimodality, a two-component Gaussian mixture beating one component by ΔBIC &gt; 10, Ashman's D ≥ 2, and a smaller-component weight ≥ 0.1. The dip test is a compiled package that cannot be installed in the browser, so the bimodality tab applies only the mixture-model criteria on up to 30,000 bursts. Skewed single-peaked distributions (the Gaussian beam, for example) can pass those alone, so treat that tab as a guide and use the full test in the python package for results.</li>
-    </ul>
-  </details>
-</main>
-
+</div>
 <script>
 "use strict";
 const DEFAULTS = {
@@ -218,9 +190,9 @@ function fmtNum(v) {
 const pow10Label = (k) => `10<tspan dy="-5" font-size="9">${k}</tspan>`;
 
 function drawPlot(spec) {
-  const css = getComputedStyle(document.documentElement);
+  const css = getComputedStyle(document.querySelector(".frb-app"));
   const col = (n) => css.getPropertyValue(n).trim();
-  const C = { fg: col("--fg"), mut: col("--muted"), grid: col("--grid"), acc: col("--accent"), acc2: col("--accent2"), acc3: col("--accent3"), band: col("--band"), bg: col("--panel") };
+  const C = { fg: col("--fg"), mut: col("--muted"), grid: col("--grid"), acc: col("--accent"), acc2: col("--accent2"), acc3: col("--accent3"), band: col("--band"), bg: col("--plot") };
   const colour = { main: C.acc, pin: C.mut, alt: C.acc2, alt2: C.acc3, band: C.band };
   const narrow = $("#plot").clientWidth < 520;
   const W = narrow ? 420 : 640, H = narrow ? 380 : 400, m = narrow ? { l: 58, r: 12, t: 12, b: 50 } : { l: 66, r: 16, t: 14, b: 54 };
@@ -544,11 +516,9 @@ $("#download").addEventListener("click", () => {
   a.href = URL.createObjectURL(blob); a.download = `frb-${tab}-${params.beam}-${params.dist}.svg`.replace(/[^\w.-]+/g, "_");
   a.click(); URL.revokeObjectURL(a.href);
 });
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => refresh());
 
 loadHash();
 buildControls();
 syncControls();
 </script>
-</body>
-</html>
+{% endraw %}
