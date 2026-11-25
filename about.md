@@ -6,7 +6,7 @@ permalink: /about/
 
 # about me
 
-<img class="pfp" src="{{ '/assets/images/grad.jpg' | relative_url }}" alt="me at graduation">
+<img class="pfp" src="{{ '/assets/images/grad.jpg' | relative_url }}" alt="me at graduation!">
 
 I'm an research assistant at the University of Canterbury, interested in time-domain astronomy, fast transients and sky surveys. My work involves modelling fast transients, from GRBs in TESS data to FRB energetics.
 
@@ -21,7 +21,7 @@ I'm an research assistant at the University of Canterbury, interested in time-do
 
 ### music, arts and crafts
 
-I play piano, guitar, and kalimba, and have played violin for 18 years. I have performed in local concert orchestras and musicals. My other creative endeavours involve knitting, crocheting, sewing, and watercolour painting. In particular, I have crocheted a JWST mirror blanket, as well as several star pillows for some astronomer friends. 
+I play piano, guitar, and kalimba, and have played violin for 18 years. I have performed in local concert orchestras and musicals. My other creative endeavours involve knitting, crocheting, sewing, and watercolour painting. My astro-related craft projects include crocheting a JWST throw and some stars!
 <div class="gallery">
     <figure>
     <a href="{{ '/assets/images/Concert_Aug_2020.jpg' | relative_url }}">
