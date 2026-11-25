@@ -24,10 +24,13 @@ function makeStars() {
 
 function draw(time) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const light = document.documentElement.getAttribute("data-theme") === "light";
 
   for (const star of stars) {
     const brightness = (Math.sin(time / 1000 * star.speed + star.offset) + 1) / 2;
-    ctx.fillStyle = "rgba(255, 255, 255, " + (0.2 + brightness * 0.7) + ")";
+    ctx.fillStyle = light
+      ? "rgba(91, 70, 201, " + (0.1 + brightness * 0.35) + ")"
+      : "rgba(255, 255, 255, " + (0.2 + brightness * 0.7) + ")";
     ctx.fillRect(star.x, star.y, star.size, star.size);
   }
 

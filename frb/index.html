@@ -5,12 +5,20 @@ title: frb energies
 
 {% raw %}
 <style>
+  @font-face { font-family: "CMU Serif"; src: url("cmu-serif.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
   .frb-app {
     --fg: #ffffff; --muted: #b4a8f5; --grid: rgba(201, 188, 255, 0.14); --accent: #c9bcff; --accent2: #ffb86b; --accent3: #6fe3c1;
     --band: #6a5fc4; --plot: #17133a; --panel: rgba(20, 16, 46, 0.82); --field: #14102e; --warn: #ffd479; --err: #ff9a9a;
-    --light: #c9bcff; --mid: #8d7df0;
+    --light: #c9bcff; --mid: #8d7df0; --on-mid: #14102e;
+  }
+  :root[data-theme="light"] .frb-app {
+    --fg: #2a2250; --muted: #5b4fb0; --grid: rgba(75, 63, 176, 0.14); --accent: #4b3fb0; --accent2: #c2570c; --accent3: #1b7f5c;
+    --band: #cfc4ff; --plot: #fbf9ff; --panel: rgba(255, 255, 255, 0.7); --field: #ffffff; --warn: #8a5a00; --err: #b3261e;
+    --light: #5b46c9; --mid: #6b58e0; --on-mid: #ffffff;
   }
   .frb-app * { box-sizing: border-box; }
+  .frb-app [hidden] { display: none !important; }
+  .frb-app .actions label { white-space: nowrap; }
   .frb-app h1 { margin: 0 0 24px; }
   .frb-app h2 { font-size: 1rem; letter-spacing: 0.04em; color: var(--light); margin: 0 0 12px; }
   .frb-app .layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
@@ -50,8 +58,8 @@ title: frb energies
   .frb-app .actions { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-top: 12px; font-size: 0.95rem; }
   .frb-app button.btn { font-family: "Pixelify Sans", monospace; font-size: 0.95rem; color: var(--light); background: transparent; border: 2px solid var(--mid); border-radius: 0; padding: 5px 10px; cursor: pointer; }
   .frb-app button.btn:hover { color: var(--fg); border-color: var(--fg); }
-  .frb-app button.btn.primary { background: var(--mid); border-color: var(--mid); color: #14102e; }
-  .frb-app button.btn.primary:hover { background: var(--light); border-color: var(--light); color: #14102e; }
+  .frb-app button.btn.primary { background: var(--mid); border-color: var(--mid); color: var(--on-mid); }
+  .frb-app button.btn.primary:hover { background: var(--light); border-color: var(--light); color: var(--on-mid); }
   .frb-app .actions label { color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
   .frb-app #status { font-size: 0.9rem; color: var(--muted); margin: 12px 0 0; min-height: 1.2em; }
   .frb-app #status.error { color: var(--err); }
@@ -81,6 +89,7 @@ title: frb energies
         <button class="tab" role="tab" data-tab="pdf">observed pdf</button>
         <button class="tab" role="tab" data-tab="profile">beam profile</button>
         <button class="tab" role="tab" data-tab="hist">simulated bursts</button>
+        <button class="tab" role="tab" data-tab="heatmap">beam heatmap</button>
         <button class="tab" role="tab" data-tab="bimodal">bimodality</button>
       </div>
       <div id="plot"><div class="loader" id="loader">starting python… the first visit downloads the python runtime and scipy, so it can take a few seconds.</div></div>
@@ -89,8 +98,10 @@ title: frb energies
       <div class="actions" id="actions">
         <button class="btn" id="pin" type="button">pin curve</button>
         <button class="btn" id="unpin" type="button">clear pin</button>
-        <label><input type="checkbox" id="logy"> log y-axis</label>
-        <button class="btn" id="download" type="button">download svg</button>
+        <label id="cdfWrap"><input type="checkbox" id="cdf"> 1 − cdf</label>
+        <label><input type="checkbox" id="logy"> <span id="logyText">log y-axis</span></label>
+        <label id="hmWrap">out to θ = <select id="hmRange"><option value="3.141592653589793">π (full sky)</option><option value="1.5707963267948966">π/2</option><option value="1">1 rad</option><option value="0.3">0.3 rad</option><option value="0.1">0.1 rad</option></select></label>
+        <button class="btn" id="download" type="button">download png</button>
       </div>
       <p id="status" role="status"></p>
     </section>
@@ -120,13 +131,16 @@ const CONTROLS = [
   { id: "bpl_break_log", label: "break energy [erg]", min: 38, max: 45, step: 0.1, fmt: (v) => "10^" + v.toFixed(1), show: (p) => p.dist === "broken_powerlaw" },
   { id: "n_sim", label: "simulated bursts", min: 3, max: 7.5, step: 0.1, log: true, fmt: (v) => Math.round(v).toLocaleString("en"), show: (p, tab) => tab === "hist" || tab === "bimodal" },
 ];
-const LOGY_DEFAULT = { pdf: false, profile: true, hist: false, bimodal: false };
+const LOGY_DEFAULT = { pdf: false, cdf: false, profile: true, hist: false, heatmap: true, bimodal: false };
 const XLIM = [32, 43];
 
 let params = { ...DEFAULTS };
 let tab = "pdf";
 const logy = { ...LOGY_DEFAULT };
 const pinned = {};
+const view = { cdf: false, hmRange: Math.PI };
+const PLASMA = ["#0d0887", "#220690", "#310597", "#3f049c", "#4c02a1", "#5901a5", "#6600a7", "#7201a8", "#7e03a8", "#8a09a5", "#9511a1", "#a01a9c", "#aa2395", "#b32c8e", "#bc3587", "#c43e7f", "#cc4778", "#d35171", "#da5a6a", "#e06363", "#e66c5c", "#eb7655", "#f0804e", "#f58b47", "#f89540", "#fba139", "#fdac33", "#feb82c", "#fdc527", "#fcd225", "#f8df25", "#f4ed27", "#f0f921"];
+const modeKey = () => (tab === "pdf" && view.cdf ? "cdf" : tab);
 let lastSvg = null;
 
 const $ = (sel) => document.querySelector(sel);
@@ -202,7 +216,8 @@ function fmtNum(v) {
   if (a >= 1000 || a < 0.01) return v.toExponential(0).replace("e+", "e");
   return String(+v.toPrecision(2));
 }
-const pow10Label = (k) => `10<tspan dy="-5" font-size="9">${k}</tspan>`;
+const PLOT_FONT = "'CMU Serif', 'Latin Modern Roman', 'Computer Modern', serif";
+const pow10Label = (k) => `10<tspan dy="-5" font-size="10">${k}</tspan>`;
 
 function drawPlot(spec) {
   const css = getComputedStyle(document.querySelector(".frb-app"));
@@ -221,7 +236,7 @@ function drawPlot(spec) {
   const Y = (v) => m.t + ih - ((fy(v) - ly0) / (ly1 - ly0)) * ih;
   const pts = (xs, ys) => xs.map((x, i) => `${X(x).toFixed(1)},${Y(ys[i]).toFixed(1)}`).join(" ");
 
-  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(spec.title)}" font-family="system-ui, sans-serif" font-size="${narrow ? 14 : 12}">`;
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(spec.title)}" font-family="${PLOT_FONT}" font-size="${narrow ? 16 : 14}">`;
   s += `<rect width="${W}" height="${H}" fill="${C.bg}"/><clipPath id="clip"><rect x="${m.l}" y="${m.t}" width="${iw}" height="${ih}"/></clipPath>`;
 
   const yTicks = ylog
@@ -246,7 +261,7 @@ function drawPlot(spec) {
     const c = colour[L.cls || "main"];
     if (L.type === "band") s += `<rect x="${X(L.x0)}" y="${m.t}" width="${Math.max(0, X(L.x1) - X(L.x0))}" height="${ih}" fill="${c}" opacity="0.6"/>`;
     else if (L.type === "vline") s += `<line x1="${X(L.x)}" x2="${X(L.x)}" y1="${m.t}" y2="${m.t + ih}" stroke="${C.mut}" stroke-dasharray="2 3"/>` +
-      (L.label ? `<text x="${X(L.x) + 4}" y="${m.t + 12}" fill="${C.mut}" font-size="11">${L.label}</text>` : "");
+      (L.label ? `<text x="${X(L.x) + 4}" y="${m.t + 12}" fill="${C.mut}" font-size="13">${L.label}</text>` : "");
     else if (L.type === "arrow") {
       const xx = X(L.x), yb = Y(0), yt = Y(L.h);
       s += `<line x1="${xx}" x2="${xx}" y1="${yb}" y2="${yt + 8}" stroke="${c}" stroke-width="2"/><polygon points="${xx},${yt} ${xx - 5},${yt + 10} ${xx + 5},${yt + 10}" fill="${c}"/>`;
@@ -261,7 +276,7 @@ function drawPlot(spec) {
   let ly = m.t + 18;
   const lx = spec.legendRight ? W - m.r - 205 : m.l + 10;
   for (const e of spec.legend || []) {
-    s += `<line x1="${lx}" x2="${lx + 20}" y1="${ly - 4}" y2="${ly - 4}" stroke="${colour[e.cls]}" stroke-width="2"${e.cls === "pin" ? ' stroke-dasharray="5 4"' : ""}/><text x="${lx + 26}" y="${ly}" fill="${C.fg}" font-size="11">${e.label}</text>`;
+    s += `<line x1="${lx}" x2="${lx + 20}" y1="${ly - 4}" y2="${ly - 4}" stroke="${colour[e.cls]}" stroke-width="2"${e.cls === "pin" ? ' stroke-dasharray="5 4"' : ""}/><text x="${lx + 26}" y="${ly}" fill="${C.fg}" font-size="13">${e.label}</text>`;
     ly += 16;
   }
   s += `<circle id="cross" r="4" fill="${C.acc}" stroke="${C.bg}" stroke-width="1.5" visibility="hidden"/></svg>`;
@@ -303,9 +318,24 @@ function yRange(top, log) {
 }
 
 function withPin(layers, legend, main) {
-  const p = pinned[tab];
+  const p = pinned[modeKey()];
   if (p) { layers.unshift({ ...p, cls: "pin", fill: false }); legend.push({ cls: "pin", label: "pinned" }); }
   return { x: main.x, y: main.y, type: main.type };
+}
+
+let cdfOffset = 0;
+function cumulative(d) {
+  const out = new Array(d.x.length);
+  let inside = d.mass || 0;
+  for (let i = 1; i < d.x.length; i++) inside += 0.5 * (d.y[i] + d.y[i - 1]) * (d.x[i] - d.x[i - 1]);
+  cdfOffset = Math.max(0, 1 - inside);
+  let acc = cdfOffset, stepped = d.mass == null || d.mass <= 0;
+  for (let i = 0; i < d.x.length; i++) {
+    if (i > 0) acc += 0.5 * (d.y[i] + d.y[i - 1]) * (d.x[i] - d.x[i - 1]);
+    if (!stepped && d.x[i] >= d.e0) { acc += d.mass; stepped = true; }
+    out[i] = acc;
+  }
+  return out;
 }
 
 /* ---------- views ---------- */
@@ -314,25 +344,29 @@ let currentMain = null;
 async function viewPdf() {
   const d = await getData("compute_pdf");
   const layers = [], legend = [];
-  const log = logy.pdf;
+  const log = logy[modeKey()];
   const bandTo = Math.min(d.cut, XLIM[1]);
   if (bandTo > XLIM[0]) layers.push({ type: "band", x0: XLIM[0], x1: bandTo, cls: "band" });
   layers.push({ type: "vline", x: d.e0, label: "E₀" });
   let spec;
   if (d.kind === "delta") {
-    layers.push({ type: "arrow", x: d.e0, h: 1 });
-    spec = { title: "all bursts at E0", xlim: XLIM, ylim: [0, 1.1], xpow10: true, xlabel: "E<tspan dy='3' font-size='9'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend: [] };
+    if (view.cdf) layers.push({ type: "line", x: [XLIM[0], d.e0, d.e0, XLIM[1]], y: [1, 1, 0, 0], cls: "main" });
+    else layers.push({ type: "arrow", x: d.e0, h: 1 });
+    spec = { title: "all bursts at E0", xlim: XLIM, ylim: [0, 1.1], xpow10: true, xlabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: view.cdf ? "P(E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> &gt; E)</tspan>" : "probability per dex", layers, legend: [] };
     currentMain = null;
     $("#readout").textContent = "an isotropic beam with a single energy gives a delta function at E₀.";
   } else {
-    const range = yRange(maxOf(d.y), log);
-    const main = withPin(layers, legend, { x: d.x, y: d.y });
-    layers.push({ type: "line", x: d.x, y: log ? d.y.map((v) => Math.max(v, range[0] / 10)) : d.y, cls: "main", fill: true });
-    currentMain = { x: d.x, y: d.y };
-    spec = { title: "observed energy pdf", xlim: XLIM, ylim: range, ylog: log, xpow10: true, xlabel: "E<tspan dy='3' font-size='9'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend,
-      hover: { x: d.x, y: d.y, xname: "log10 E_obs", yname: "pdf/dex" } };
+    const yy = view.cdf ? cumulative(d).map((v) => Math.max(0, 1 - v)) : d.y;
+    const range = view.cdf ? (log ? [1e-6, 2] : [0, 1.05]) : yRange(maxOf(d.y), log);
+    withPin(layers, legend, { x: d.x, y: yy });
+    layers.push({ type: "line", x: d.x, y: log ? yy.map((v) => Math.max(v, range[0] / 10)) : yy, cls: "main", fill: !view.cdf });
+    currentMain = { x: d.x, y: yy };
+    spec = { title: view.cdf ? "observed energy 1 - cdf" : "observed energy pdf", xlim: XLIM, ylim: range, ylog: log, xpow10: true, xlabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: view.cdf ? "P(E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> &gt; E)</tspan>" : "probability per dex", layers, legend,
+      hover: { x: d.x, y: yy, xname: "log10 E_obs", yname: view.cdf ? "1-cdf" : "pdf/dex" } };
     const notes = [];
-    if (d.total != null) notes.push(`∫ pdf = ${d.total.toFixed(4)} (normalisation check)`);
+    if (view.cdf && cdfOffset > 0.005) notes.push(`${(100 * cdfOffset).toFixed(1)}% of bursts fall below the plotted range, so 1 - cdf starts at ${(1 - cdfOffset).toFixed(3)}`);
+    if (view.cdf && yy[yy.length - 1] > 1e-4) notes.push(`1 - cdf is still ${yy[yy.length - 1].toExponential(2)} at the right edge of the plot`);
+    if (!view.cdf && d.total != null) notes.push(`∫ pdf = ${d.total.toFixed(4)} (normalisation check)`);
     if (d.mass != null && d.mass > 1e-4) notes.push(`${(100 * d.mass).toFixed(1)}% of bursts sit in a point mass at E₀ (the plateau)`);
     $("#readout").textContent = notes.join("  ·  ");
   }
@@ -352,8 +386,76 @@ async function viewProfile() {
   layers.push({ type: "line", x: d.theta, y: d.g, cls: "main" });
   legend.push({ cls: "main", label: "beam strength g(θ) = E_obs / E" });
   currentMain = { x: d.theta, y: d.g };
-  drawPlot({ title: "beam strength against observer angle", xlim: [0, Math.PI], ylim: range, ylog: log, xlabel: "observer angle θ [rad]", ylabel: "E<tspan dy='3' font-size='9'>obs</tspan><tspan dy='-3'>/E</tspan>", layers, legend, legendRight: true,
+  drawPlot({ title: "beam strength against observer angle", xlim: [0, Math.PI], ylim: range, ylog: log, xlabel: "observer angle θ [rad]", ylabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'>/E</tspan>", layers, legend, legendRight: true,
     hover: { x: d.theta, y: d.g, xname: "θ [rad]", yname: "g" } });
+  $("#readout").textContent = "";
+  setStatus(`python ready · computed in ${(d._ms / 1000).toFixed(2)} s`);
+}
+
+function interp(xs, ys, v) {
+  let lo = 0, hi = xs.length - 1;
+  while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (xs[mid] <= v) lo = mid; else hi = mid; }
+  const t = (v - xs[lo]) / (xs[hi] - xs[lo] || 1);
+  return ys[lo] + Math.min(1, Math.max(0, t)) * (ys[hi] - ys[lo]);
+}
+const plasmaRgb = PLASMA.map((h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)));
+function plasmaAt(t) {
+  const f = Math.min(1, Math.max(0, t)) * (plasmaRgb.length - 1), i = Math.min(plasmaRgb.length - 2, Math.floor(f)), u = f - i;
+  return plasmaRgb[i].map((c, k) => c + u * (plasmaRgb[i + 1][k] - c));
+}
+
+async function viewHeatmap() {
+  const d = await getData("compute_profile");
+  const log = logy.heatmap;
+  const tmax = view.hmRange;
+  const gmax = maxOf(d.g), lo = 1e-3;
+  const scale = (g) => (log ? (Math.log10(Math.max(g, lo)) - Math.log10(lo)) / (Math.log10(gmax) - Math.log10(lo)) : g / gmax);
+  const N = 760, cv = document.createElement("canvas");
+  cv.width = cv.height = N;
+  const ctx = cv.getContext("2d"), img = ctx.createImageData(N, N);
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+    const x = (i + 0.5) / N * 2 - 1, y = 1 - (j + 0.5) / N * 2, r = Math.hypot(x, y), o = 4 * (j * N + i);
+    if (r > 1) { img.data[o + 3] = 0; continue; }
+    const c = plasmaAt(scale(interp(d.theta, d.g, r * tmax)));
+    img.data[o] = c[0]; img.data[o + 1] = c[1]; img.data[o + 2] = c[2]; img.data[o + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+
+  const css = getComputedStyle(document.querySelector(".frb-app"));
+  const col = (n) => css.getPropertyValue(n).trim();
+  const C = { fg: col("--fg"), mut: col("--muted"), bg: col("--plot") };
+  const W = 540, H = 470, cx = 215, cy = 215, R = 190;
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="beam strength heatmap" font-family="${PLOT_FONT}" font-size="15">`;
+  s += `<rect width="${W}" height="${H}" fill="${C.bg}"/>`;
+  s += `<defs><linearGradient id="cbar" x1="0" y1="1" x2="0" y2="0">${PLASMA.map((h, k) => `<stop offset="${(k / (PLASMA.length - 1)).toFixed(4)}" stop-color="${h}"/>`).join("")}</linearGradient></defs>`;
+  s += `<image x="${cx - R}" y="${cy - R}" width="${2 * R}" height="${2 * R}" href="${cv.toDataURL("image/png")}"/>`;
+  const rings = niceTicks(0, tmax, 4).filter((t) => t > 0 && t <= tmax * 1.001);
+  for (const t of rings) {
+    const rr = (t / tmax) * R;
+    s += `<circle cx="${cx}" cy="${cy}" r="${rr}" fill="none" stroke="#ffffff" stroke-opacity="0.45" stroke-dasharray="2 4"/>`;
+    s += `<text x="${cx + rr * Math.SQRT1_2 + 3}" y="${cy - rr * Math.SQRT1_2 - 3}" fill="#ffffff" stroke="#000000" stroke-opacity="0.35" stroke-width="2.5" paint-order="stroke" font-size="13">${fmtNum(t)}</text>`;
+  }
+  if (d.edge != null && d.edge <= tmax) s += `<circle cx="${cx}" cy="${cy}" r="${(d.edge / tmax) * R}" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${C.mut}" stroke-opacity="0.6"/>`;
+  s += `<text x="${cx}" y="${H - 10}" text-anchor="middle" fill="${C.fg}">observer angle θ from the beam axis [rad]</text>`;
+  const bx = 445, bw = 18, by = cy - R, bh = 2 * R;
+  s += `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="url(#cbar)" stroke="${C.mut}" stroke-opacity="0.6"/>`;
+  const ticks = log ? [-3, -2, -1, 0].filter((t) => 10 ** t <= gmax * 1.0001) : niceTicks(0, gmax, 5).filter((t) => t <= gmax * 1.0001);
+  for (const t of ticks) {
+    const f = log ? scale(10 ** t) : scale(t), yy = by + bh * (1 - f);
+    s += `<line x1="${bx + bw}" x2="${bx + bw + 4}" y1="${yy}" y2="${yy}" stroke="${C.mut}"/><text x="${bx + bw + 8}" y="${yy + 5}" fill="${C.mut}">${log ? pow10Label(t) : fmtNum(t)}</text>`;
+  }
+  s += `<text transform="translate(${bx + bw + 56} ${cy}) rotate(-90)" text-anchor="middle" fill="${C.fg}">E<tspan dy="3" font-size="10">obs</tspan><tspan dy="-3">/E</tspan></text></svg>`;
+  const host = $("#plot");
+  host.innerHTML = s;
+  lastSvg = host.firstElementChild;
+  lastSvg.addEventListener("pointermove", (ev) => {
+    const r = lastSvg.getBoundingClientRect();
+    const px = ((ev.clientX - r.left) / r.width) * W, py = ((ev.clientY - r.top) / r.height) * H;
+    const rr = Math.hypot(px - cx, py - cy) / R;
+    $("#readout").textContent = rr <= 1 ? `θ = ${(rr * tmax).toPrecision(3)} rad,  E_obs/E = ${interp(d.theta, d.g, rr * tmax).toExponential(3)}` : "";
+  });
+  currentMain = null;
   $("#readout").textContent = "";
   setStatus(`python ready · computed in ${(d._ms / 1000).toFixed(2)} s`);
 }
@@ -376,7 +478,7 @@ async function viewHist() {
     if (d.kind === "curve") { layers.push({ type: "line", x: d.x, y: log ? d.y.map((v) => Math.max(v, range[0] / 10)) : d.y, cls: "alt", w: 1.5 }); legend.push({ cls: "alt", label: "numerical pdf" }); }
   }
   currentMain = { x: st.x, y: st.y };
-  drawPlot({ title: "simulated observed energies", xlim: XLIM, ylim: range, ylog: log, xpow10: true, xlabel: "E<tspan dy='3' font-size='9'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend,
+  drawPlot({ title: "simulated observed energies", xlim: XLIM, ylim: range, ylog: log, xpow10: true, xlabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend,
     hover: { x: st.x, y: st.y, xname: "log10 E_obs", yname: "density/dex" } });
   $("#readout").textContent = h.below > 0 ? `${(100 * h.below).toFixed(1)}% of simulated bursts fall below 10^${XLIM[0]} erg and are off the left of the plot.` : "";
   setStatus(`python ready · computed in ${(h._ms / 1000).toFixed(2)} s`);
@@ -416,7 +518,7 @@ async function viewBimodal() {
     legend.push({ cls: i ? "alt2" : "alt", label: `component ${i + 1}` });
   });
   currentMain = { x: st.x, y: st.y };
-  drawPlot({ title: "two-component gaussian mixture fit", xlim: [lo, hi], ylim: range, ylog: log, xlabel: "log₁₀ E<tspan dy='3' font-size='9'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend });
+  drawPlot({ title: "two-component gaussian mixture fit", xlim: [lo, hi], ylim: range, ylog: log, xlabel: "log<tspan dy='3' font-size='10'>10</tspan><tspan dy='-3'> E</tspan><tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend });
   const ok = (v) => (v ? '<span class="pass">pass</span>' : '<span class="fail">fail</span>');
   const f = (v, n = 2) => Number(v).toFixed(n);
   card.innerHTML = `<table>
@@ -499,7 +601,13 @@ function syncControls(setSliders = true) {
     }
   }
 
-  $("#logy").checked = logy[tab];
+  $("#logy").checked = logy[modeKey()];
+  $("#cdf").checked = view.cdf;
+  $("#cdfWrap").hidden = tab !== "pdf";
+  $("#hmWrap").hidden = tab !== "heatmap";
+  $("#hmRange").value = String(view.hmRange);
+  $("#logyText").textContent = tab === "heatmap" ? "log colour scale" : "log y-axis";
+  $("#pin").hidden = $("#unpin").hidden = tab === "heatmap";
 
   document.querySelectorAll(".tab").forEach((t) =>
     t.setAttribute("aria-selected", t.dataset.tab === tab)
@@ -525,6 +633,7 @@ async function loop() {
       if (tab === "pdf") await viewPdf();
       else if (tab === "profile") { $("#card").innerHTML = ""; await viewProfile(); }
       else if (tab === "hist") await viewHist();
+      else if (tab === "heatmap") { $("#card").innerHTML = ""; await viewHeatmap(); }
       else await viewBimodal();
     } catch (err) {
       setStatus("error: " + err.message, true);
@@ -536,13 +645,15 @@ async function loop() {
 
 /* ---------- state in the url ---------- */
 function saveHash() {
-  try { history.replaceState(null, "", "#" + encodeURIComponent(JSON.stringify({ t: tab, p: params }))); } catch (_) { /* ignore */ }
+  try { history.replaceState(null, "", "#" + encodeURIComponent(JSON.stringify({ t: tab, p: params, c: view.cdf, r: view.hmRange }))); } catch (_) { /* ignore */ }
 }
 function loadHash() {
   try {
     const s = JSON.parse(decodeURIComponent(location.hash.slice(1)));
     if (s.p) for (const k of Object.keys(DEFAULTS)) if (typeof s.p[k] === typeof DEFAULTS[k]) params[k] = s.p[k];
-    if (["pdf", "profile", "hist", "bimodal"].includes(s.t)) tab = s.t;
+    if (["pdf", "profile", "hist", "heatmap", "bimodal"].includes(s.t)) tab = s.t;
+    if (s.c === true) view.cdf = true;
+    if (typeof s.r === "number" && s.r > 0) view.hmRange = s.r;
   } catch (_) { /* no saved state */ }
 }
 
@@ -552,22 +663,51 @@ $("#tabs").addEventListener("click", (e) => {
   if (!t) return;
   tab = t.dataset.tab; syncControls(); $("#readout").textContent = ""; refresh();
 });
-$("#logy").addEventListener("change", (e) => { logy[tab] = e.target.checked; refresh(); });
-$("#pin").addEventListener("click", () => { if (currentMain) { pinned[tab] = { type: "line", x: currentMain.x, y: currentMain.y }; refresh(); } });
-$("#unpin").addEventListener("click", () => { delete pinned[tab]; refresh(); });
+$("#logy").addEventListener("change", (e) => { logy[modeKey()] = e.target.checked; refresh(); });
+$("#cdf").addEventListener("change", (e) => { view.cdf = e.target.checked; syncControls(); refresh(); });
+$("#hmRange").addEventListener("change", (e) => { view.hmRange = +e.target.value; refresh(); });
+$("#pin").addEventListener("click", () => { if (currentMain) { pinned[modeKey()] = { type: "line", x: currentMain.x, y: currentMain.y }; refresh(); } });
+$("#unpin").addEventListener("click", () => { delete pinned[modeKey()]; refresh(); });
 $("#reset").addEventListener("click", () => { params = { ...DEFAULTS }; syncControls(); refresh(); });
 $("#share").addEventListener("click", async () => {
   saveHash();
   try { await navigator.clipboard.writeText(location.href); setStatus("link copied"); } catch (_) { setStatus("copy the address bar to share this view"); }
 });
-$("#download").addEventListener("click", () => {
+let fontB64 = null;
+async function fontData() {
+  if (fontB64) return fontB64;
+  const bytes = new Uint8Array(await (await fetch("cmu-serif.woff2")).arrayBuffer());
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return (fontB64 = btoa(bin));
+}
+$("#download").addEventListener("click", async () => {
   if (!lastSvg) return;
-  const blob = new Blob([new XMLSerializer().serializeToString(lastSvg)], { type: "image/svg+xml" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob); a.download = `frb-${tab}-${params.beam}-${params.dist}.svg`.replace(/[^\w.-]+/g, "_");
-  a.click(); URL.revokeObjectURL(a.href);
+  try {
+    const clone = lastSvg.cloneNode(true);
+    const vb = lastSvg.viewBox.baseVal, scale = 4;
+    clone.setAttribute("width", vb.width * scale);
+    clone.setAttribute("height", vb.height * scale);
+    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+    style.textContent = `@font-face{font-family:'CMU Serif';src:url(data:font/woff2;base64,${await fontData()}) format('woff2');}`;
+    clone.insertBefore(style, clone.firstChild);
+    const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)], { type: "image/svg+xml" }));
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = vb.width * scale; canvas.height = vb.height * scale;
+    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(url);
+    const png = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(png);
+    a.download = `frb-${tab}-${params.beam}-${params.dist}.png`.replace(/[^\w.-]+/g, "_");
+    a.click(); URL.revokeObjectURL(a.href);
+  } catch (err) { setStatus("could not make the png: " + err); }
 });
 
+document.addEventListener("themechange", () => refresh());
 loadHash();
 buildControls();
 syncControls();

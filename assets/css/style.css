@@ -1,7 +1,31 @@
 :root {
+  color-scheme: dark;
+  --text: white;
+  --hover: white;
   --light: #c9bcff;
   --mid: #8d7df0;
   --dim: #7a6bd8;
+  --page-bg: linear-gradient(to bottom, #1a1640, #38307a 25%, #292260 60%, #14102e);
+  --header-bg: rgba(20, 16, 46, 0.88);
+  --wash: rgba(20, 16, 46, 0.35);
+  --home-wash: linear-gradient(to bottom, rgba(20, 16, 46, 0) 40%, rgba(20, 16, 46, 0.8));
+  --img-bg: rgba(0, 0, 0, 0.25);
+  --shadow: rgba(20, 16, 46, 0.9);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --text: #2a2250;
+  --hover: #150e45;
+  --light: #5b46c9;
+  --mid: #6b58e0;
+  --dim: #6a5cc8;
+  --page-bg: linear-gradient(to bottom, #f6f2ff, #e6dcff 25%, #efe8ff 60%, #d8ccff);
+  --header-bg: rgba(246, 242, 255, 0.92);
+  --wash: rgba(246, 242, 255, 0.25);
+  --home-wash: linear-gradient(to bottom, rgba(246, 242, 255, 0.6), rgba(240, 233, 255, 0.88) 75%);
+  --img-bg: rgba(75, 63, 176, 0.08);
+  --shadow: rgba(246, 242, 255, 0.9);
 }
 
 * {
@@ -12,8 +36,8 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: Calibri, Carlito, sans-serif;
-  color: white;
-  background: linear-gradient(to bottom, #1a1640, #38307a 25%, #292260 60%, #14102e);
+  color: var(--text);
+  background: var(--page-bg);
   background-attachment: fixed;
 }
 
@@ -40,7 +64,7 @@ main.home {
 
 body.home {
   background:
-    linear-gradient(to bottom, rgba(20, 16, 46, 0) 40%, rgba(20, 16, 46, 0.8)),
+    var(--home-wash),
     url("../images/mw.jpg") center / cover fixed;
 }
 
@@ -48,7 +72,7 @@ body.home {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(20, 16, 46, 0.35);
+  background: var(--wash);
 }
 
 body.home #stars {
@@ -78,7 +102,7 @@ a {
 }
 
 a:hover {
-  color: white;
+  color: var(--hover);
 }
 
 p, li {
@@ -123,8 +147,7 @@ header {
   align-items: center;
   gap: 8px 24px;
   padding: 10px 20px;
-  background: rgba(20, 16, 46, 0.88);
-  border-bottom: 3px solid var(--mid);
+  background: var(--header-bg);
 }
 
 header a {
@@ -134,17 +157,18 @@ header a {
 
 header a:hover,
 header a.current {
-  color: white;
+  color: var(--hover);
 }
 
 .logo {
   font-size: 1.3rem;
-  color: white;
+  color: var(--text);
 }
 
 header nav {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px 24px;
   font-size: 1.15rem;
 }
@@ -174,7 +198,7 @@ h3 {
   width: 100%;
   aspect-ratio: 3 / 4;
   object-fit: contain;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--img-bg);
   border: 3px solid var(--mid);
 }
 
@@ -226,6 +250,14 @@ body.home .subtitle {
   cursor: url("../cursor-click.svg") 14 14, auto;
 }
 
+:root[data-theme="light"] * {
+  cursor: url("../cursor-light.svg") 14 14, auto;
+}
+
+:root[data-theme="light"] *:active {
+  cursor: url("../cursor-click-light.svg") 14 14, auto;
+}
+
 .banner {
   position: absolute;
   top: 0;
@@ -244,7 +276,7 @@ body.has-banner main {
 }
 
 body.has-banner h1 {
-  text-shadow: 0 2px 14px rgba(20, 16, 46, 0.9);
+  text-shadow: 0 2px 14px var(--shadow);
 }
 
 .icons {
@@ -260,5 +292,44 @@ body.has-banner h1 {
 }
 
 .icons a:hover {
-  color: white;
+  color: var(--hover);
+}
+
+.theme-toggle {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: none;
+  border: 2px solid var(--mid);
+  color: var(--mid);
+}
+
+.theme-toggle:hover {
+  color: var(--hover);
+  border-color: var(--hover);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--hover);
+  outline-offset: 2px;
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  shape-rendering: crispEdges;
+}
+
+.theme-toggle .icon-moon,
+:root[data-theme="light"] .theme-toggle .icon-sun {
+  display: none;
+}
+
+:root[data-theme="light"] .theme-toggle .icon-moon {
+  display: block;
 }
