@@ -158,6 +158,9 @@ header a {
 header a:hover,
 header a.current {
   color: var(--hover);
+  text-decoration: none;
+  border-bottom: none;
+  box-shadow: none;
 }
 
 .logo {
