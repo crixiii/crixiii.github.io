@@ -9,10 +9,10 @@ from frbbeaming import Config, IsotropicBeam, RelativisticBeam, Simulation
 from frbbeaming.analysis import bimodality
 from frbbeaming.numerics import LN10
 
-XLIM = (32.0, 43.0)
+
+XLIM = (33.0, 43.0) #need to update for flexible xlims? place under  graph
 _beams = {}
 _cache = {}
-
 
 def _clean(o):
     if isinstance(o, dict):
@@ -36,8 +36,6 @@ def _cfg(p):
     return Config(theta_p=p["theta_p"], gamma_p=p["gamma_p"], sigma=p["sigma"], zeta=p["zeta"],
                   lognorm_shape=p["lognorm_shape"], pl_index=p["pl_index"],
                   bpl_alpha1=p["bpl_alpha1"], bpl_alpha2=p["bpl_alpha2"], bpl_break=10.0 ** p["bpl_break_log"])
-
-
 def _key(label, p):
     return (label,) + {
         "Isotropic": (),
