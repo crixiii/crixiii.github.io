@@ -21,7 +21,7 @@
   --mid: #6b58e0;
   --dim: #6a5cc8;
   --page-bg: linear-gradient(to bottom, #f6f2ff, #e6dcff 25%, #efe8ff 60%, #d8ccff);
-  --header-bg: rgba(246, 242, 255, 0.92);
+  --header-bg: rgba(231, 223, 248, 0.92);
   --wash: rgba(246, 242, 255, 0.25);
   --home-wash: linear-gradient(to bottom, rgba(246, 242, 255, 0.6), rgba(240, 233, 255, 0.88) 75%);
   --img-bg: rgba(75, 63, 176, 0.08);
@@ -196,8 +196,8 @@ h3 {
 .posters img {
   display: block;
   width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: contain;
+  aspect-ratio: 1 / 1.4142;
+  object-fit: cover;
   background: var(--img-bg);
   border: 3px solid var(--mid);
 }
@@ -206,6 +206,110 @@ h3 {
   margin-top: 6px;
   font-size: 0.95rem;
   color: var(--light);
+}
+
+.posters.carousel {
+  --cw: min(300px, 62vw);
+  display: block;
+  position: relative;
+  overflow: hidden;
+  margin: 20px 0;
+  padding: 10px 0 8px;
+  touch-action: pan-y;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+}
+
+.posters.carousel .track {
+  display: flex;
+  gap: 24px;
+  transition: transform 0.45s ease;
+  will-change: transform;
+}
+
+.posters.carousel figure {
+  flex: 0 0 var(--cw);
+  width: var(--cw);
+  opacity: 0.3;
+  transform: scale(0.86);
+  transition: transform 0.45s ease, opacity 0.45s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.posters.carousel figure.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.posters.carousel img {
+  -webkit-user-drag: none;
+}
+
+.posters.carousel figcaption {
+  min-height: 2.6em;
+  text-align: center;
+}
+
+.carousel-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+.car-btn {
+  appearance: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: none;
+  border: 2px solid var(--mid);
+  color: var(--mid);
+  font-family: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.car-btn:hover:not(:disabled) {
+  color: var(--hover);
+  border-color: var(--hover);
+}
+
+.car-btn:disabled {
+  opacity: 0.35;
+}
+
+.car-btn:focus-visible,
+.car-dot:focus-visible {
+  outline: 2px solid var(--hover);
+  outline-offset: 2px;
+}
+
+.car-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.car-dot {
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  background: none;
+  border: 2px solid var(--mid);
+}
+
+.car-dot[aria-current="true"] {
+  background: var(--mid);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .posters.carousel .track,
+  .posters.carousel figure {
+    transition: none;
+  }
 }
 
 .pfp {
