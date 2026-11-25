@@ -52,7 +52,7 @@ title: frb energies
   .frb-app .tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--fg); }
   .frb-app .tab:focus-visible, .frb-app button:focus-visible, .frb-app select:focus-visible, .frb-app input:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
   .frb-app #plot { min-height: 280px; position: relative; }
-  .frb-app #plot svg { display: block; width: 100%; height: auto; touch-action: pan-y; border: 2px solid var(--mid); }
+  .frb-app #plot svg { display: block; width: 100%; height: auto; touch-action: pan-y; border: 2px solid var(--mid); background: var(--plot); }
   .frb-app .loader { display: flex; align-items: center; justify-content: center; min-height: 280px; color: var(--muted); text-align: center; padding: 0 16px; }
   .frb-app #readout { min-height: 1.5em; font-size: 0.95rem; color: var(--muted); margin: 8px 0 0; font-variant-numeric: tabular-nums; }
   .frb-app .actions { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-top: 12px; font-size: 0.95rem; }
@@ -70,6 +70,7 @@ title: frb energies
   .frb-app #card p { font-size: 1rem; }
   .frb-app .pass { color: var(--accent3); } .frb-app .fail { color: var(--err); }
   .frb-app .caution { color: var(--warn); font-size: 0.95rem; margin: 10px 0 0; }
+  @media (min-width: 840px) { .frb-app #plot svg { max-height: calc(100vh - 395px); min-height: 280px; } .frb-app h1 { margin-bottom: 12px; } .frb-app .group { margin-bottom: 6px; } .frb-app select { margin-bottom: 10px; } .frb-app .panel { padding: 12px; } }
 </style>
 <div class="frb-app">
   <h1>FRB beaming</h1>
@@ -594,7 +595,7 @@ function syncControls(setSliders = true) {
 
     const val = params[c.id];
 
-    $("#n_" + c.id).value = c.fmt ? c.fmt(val) : +(+val).toPrecision(6);
+    $("#n_" + c.id).value = c.id === "n_sim" ? Math.round(val) : +(+val).toPrecision(6);
 
     if (setSliders) {
       $("#s_" + c.id).value = c.log ? Math.log10(val) : val;
