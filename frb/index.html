@@ -203,7 +203,19 @@ let tab = "pdf";
 const logy = { ...LOGY_DEFAULT };
 const pinned = {};
 const view = { cdf: false, hmRange: Math.PI };
-const PLASMA = ["#0d0887", "#220690", "#310597", "#3f049c", "#4c02a1", "#5901a5", "#6600a7", "#7201a8", "#7e03a8", "#8a09a5", "#9511a1", "#a01a9c", "#aa2395", "#b32c8e", "#bc3587", "#c43e7f", "#cc4778", "#d35171", "#da5a6a", "#e06363", "#e66c5c", "#eb7655", "#f0804e", "#f58b47", "#f89540", "#fba139", "#fdac33", "#feb82c", "#fdc527", "#fcd225", "#f8df25", "#f4ed27", "#f0f921"];
+
+const PURPLES = [
+  "#10052f", "#1d0b46", "#2d125c", "#3e1d70",
+  "#512b83", "#643c96", "#7850a7", "#8c67b7",
+  "#a080c6", "#b49bd4", "#c7b5e0", "#d8cceb",
+  "#e7e1f3", "#f2effa", "#fcfbff"
+];
+
+const lightMode = () =>
+  document.documentElement.classList.contains("light");
+
+const PLASMA = () => lightMode() ? [...PURPLES].reverse() : PURPLES;
+  
 const modeKey = () => (tab === "pdf" && view.cdf ? "cdf" : tab);
 let lastSvg = null;
 
@@ -487,11 +499,17 @@ function interp(xs, ys, v) {
   const t = (v - xs[lo]) / (xs[hi] - xs[lo] || 1);
   return ys[lo] + Math.min(1, Math.max(0, t)) * (ys[hi] - ys[lo]);
 }
-const plasmaRgb = PLASMA.map((h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)));
 function plasmaAt(t) {
-  const f = Math.min(1, Math.max(0, t)) * (plasmaRgb.length - 1), i = Math.min(plasmaRgb.length - 2, Math.floor(f)), u = f - i;
-  return plasmaRgb[i].map((c, k) => c + u * (plasmaRgb[i + 1][k] - c));
-}
+  const colours = PLASMA();
+  const rgb = colours.map((h) =>
+    [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16))
+  );
+
+  const f = Math.min(1, Math.max(0, t)) * (rgb.length - 1);
+  const i = Math.min(rgb.length - 2, Math.floor(f));
+  const u = f - i;
+
+  return rgb[i].map((c, k) => c + u * (rgb[i + 1][k] - c));}
 
 async function viewHeatmap() {
   const d = await getData("compute_profile");
@@ -516,8 +534,9 @@ async function viewHeatmap() {
   const W = 540, H = 470, cx = 215, cy = 215, R = 190;
   let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="beam strength heatmap" font-family="${PLOT_FONT}" font-size="15">`;
   s += `<rect width="${W}" height="${H}" fill="${C.bg}"/>`;
-  s += `<defs><linearGradient id="cbar" x1="0" y1="1" x2="0" y2="0">${PLASMA.map((h, k) => `<stop offset="${(k / (PLASMA.length - 1)).toFixed(4)}" stop-color="${h}"/>`).join("")}</linearGradient></defs>`;
-  s += `<image x="${cx - R}" y="${cy - R}" width="${2 * R}" height="${2 * R}" href="${cv.toDataURL("image/png")}"/>`;
+  const colours = PLASMA();
+  s += `<defs><linearGradient id="cbar" x1="0" y1="1" x2="0" y2="0">${colours.map((h, k) => `<stop offset="${(k / (colours.length - 1)).toFixed(4)}" stop-color="${h}"/>`).join("")}</linearGradient></defs>`;s += `<image x="${cx - R}" y="${cy - R}" width="${2 * R}" height="${2 * R}" href="${cv.toDataURL("image/png")}"/>`;
+  
   const rings = niceTicks(0, tmax, 4).filter((t) => t > 0 && t <= tmax * 1.001);
   for (const t of rings) {
     const rr = (t / tmax) * R;
