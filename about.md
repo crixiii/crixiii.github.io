@@ -61,19 +61,17 @@ I play piano, guitar, and kalimba, and have played violin for 18 years. I have p
   <span class="repertoire-tab">♪ music</span>
   <div class="repertoire-body">
     <input type="radio" name="music" id="tab-rep" checked>
-    <label for="tab-rep">repertoire</label>
+    <label for="tab-rep">selected repertoire</label>
     <input type="radio" name="music" id="tab-learn">
     <label for="tab-learn">learning</label>
     <div class="panel-rep">
       <h3>violin</h3>
-      <ul><li>Song title 1 - Composer</li><li>Song title 2 - Composer</li></ul>
+      <ul><li>Sarasate - Introduction and Tarantelle, Op. 43</li><li>Młynarski - Mazurka, Op. 7 No. 1 </li></ul>
       <h3>piano</h3>
-      <ul><li>Song title 3 - Composer</li><li>Song title 4 - Composer</li></ul>
-      <h3>guitar &amp; kalimba</h3>
-      <ul><li>Song title 5 - Artist</li><li>Song title 6 - Artist</li></ul>
+      <ul><li>Rachmaninoff - Prelude in C-sharp minor, Op. 3 No. 2</li><li>Sullivan - Twilight, Op. 12</li></ul>
     </div>
     <div class="panel-learn">
-      <ul><li>Learning piece 1 - Composer</li><li>Learning piece 2 - Composer</li></ul>
+      <ul><li>Wieniawski - Scherzo Tarantelle, Op. 16 </li><li>Reger - Sonate, Op. 139</li></ul>
     </div>
   </div>
 </aside>
