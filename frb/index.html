@@ -231,7 +231,7 @@ const PURPLES = [
 ];
 
 const lightMode = () =>
-  document.documentElement.classList.contains("light");
+  document.documentElement.getAttribute("data-theme") === "light";
 
 const PLASMA = () => lightMode() ? [...PURPLES].reverse() : PURPLES;
   
@@ -572,13 +572,14 @@ async function viewHeatmap() {
   const colours = PLASMA();
   s += `<defs><linearGradient id="cbar" x1="0" y1="1" x2="0" y2="0">${colours.map((h, k) => `<stop offset="${(k / (colours.length - 1)).toFixed(4)}" stop-color="${h}"/>`).join("")}</linearGradient></defs>`;s += `<image x="${cx - R}" y="${cy - R}" width="${2 * R}" height="${2 * R}" href="${cv.toDataURL("image/png")}"/>`;
   
+  const ink = lightMode() ? "#9d8cff" : "#ffffff", halo = "#000000";
   const rings = niceTicks(0, tmax, 4).filter((t) => t > 0 && t <= tmax * 1.001);
   for (const t of rings) {
     const rr = (t / tmax) * R;
-    s += `<circle cx="${cx}" cy="${cy}" r="${rr}" fill="none" stroke="#ffffff" stroke-opacity="0.45" stroke-dasharray="2 4"/>`;
-    s += `<text x="${cx + rr * Math.SQRT1_2 + 3}" y="${cy - rr * Math.SQRT1_2 - 3}" fill="#ffffff" stroke="#000000" stroke-opacity="0.35" stroke-width="2.5" paint-order="stroke" font-size="13">${fmtNum(t)}</text>`;
+    s += `<circle cx="${cx}" cy="${cy}" r="${rr}" fill="none" stroke="${ink}" stroke-opacity="0.45" stroke-dasharray="2 4"/>`;
+    s += `<text x="${cx + rr * Math.SQRT1_2 + 3}" y="${cy - rr * Math.SQRT1_2 - 3}" fill="${lightMode() ? "#ffffff" : ink}" stroke="${halo}" stroke-opacity="${lightMode() ? 0.8 : 0.35}" stroke-width="2.5" paint-order="stroke" font-size="13">${fmtNum(t)}</text>`;
   }
-  if (d.edge != null && d.edge <= tmax) s += `<circle cx="${cx}" cy="${cy}" r="${(d.edge / tmax) * R}" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+  if (d.edge != null && d.edge <= tmax) s += `<circle cx="${cx}" cy="${cy}" r="${(d.edge / tmax) * R}" fill="none" stroke="${ink}" stroke-width="1.5" stroke-dasharray="5 4"/>`;
   s += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${C.mut}" stroke-opacity="0.6"/>`;
   s += `<text x="${cx}" y="${H - 10}" text-anchor="middle" fill="${C.fg}">observer angle θ from the beam axis [rad]</text>`;
   const bx = 445, bw = 18, by = cy - R, bh = 2 * R;
