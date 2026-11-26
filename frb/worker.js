@@ -6,7 +6,8 @@ let py = null;
 let app = null;
 let sklearnLoaded = false;
 
-const status = (text) => postMessage({ type: "status", text });
+// percent = share of start-up already finished (omit for messages after start-up)
+const status = (text, percent) => postMessage({ type: "status", text, percent });
 
 async function fetchText(path) {
   const response = await fetch(new URL(path, self.location.href));
@@ -15,18 +16,20 @@ async function fetchText(path) {
 }
 
 async function init() {
-  status("loading python…");
+  status("loading python…", 0);
   py = await loadPyodide({ indexURL: PYODIDE });
-  status("loading numpy and scipy…");
-  await py.loadPackage(["numpy", "scipy"]);
-  status("loading the frbbeaming package…");
+  status("loading numpy…", 25);
+  await py.loadPackage("numpy");
+  status("loading scipy…", 40);
+  await py.loadPackage("scipy");
+  status("loading the frbbeaming package…", 75);
   py.FS.mkdirTree("/home/pyodide");
   const bundle = await fetch(new URL("frbbeaming.zip", self.location.href));
   if (!bundle.ok) throw new Error(`could not fetch frbbeaming.zip (${bundle.status})`);
   py.unpackArchive(await bundle.arrayBuffer(), "zip", { extractDir: "/home/pyodide" });
   py.FS.writeFile("/home/pyodide/frb_app.py", await fetchText("frb_app.py"));
   py.runPython("import sys\nsys.path.insert(0, '/home/pyodide')");
-  app = py.pyimport("frb_app");
+  app = py.pyimport("frb_app"); // imports numpy, scipy and frbbeaming
   postMessage({ type: "ready" });
 }
 

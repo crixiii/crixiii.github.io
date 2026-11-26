@@ -157,7 +157,7 @@ title: frb energies
         <div class="loader" id="loader">
           <div class="loading-screen">
             <div class="loading-title">Loading FRBBeaming</div>
-            <div class="loading-subtitle" id="loadingText">loading...</div>
+            <div class="loading-subtitle" id="loadingText">starting…</div>
             <div class="pixel-progress">
               <div class="pixel-progress-fill" id="loadingBar"></div>
             </div>
@@ -264,28 +264,32 @@ worker.onmessage = (event) => {
 
   if (m.type === "status") {
     setStatus(m.text);
-
-    const msg = m.text.toLowerCase();
-    if (msg.includes("download")) updateLoader(25, "loading python...");
-    else if (msg.includes("load")) updateLoader(55, "loading packages...");
-    else if (msg.includes("scipy")) updateLoader(75, "simulating FRBs...");
-    else updateLoader(15, m.text);}
+    if (m.percent !== undefined) updateLoader(m.percent, m.text);}
 
   else if (m.type === "ready") {
     ready = true;
-    updateLoader(100, "Ready!");
-    setStatus("python ready");
-    setTimeout(() => refresh(), 350);}
+    // the first plot still has to be computed, so the bar is not full yet
+    updateLoader(85, "computing the first plot…");
+    refresh();}
 
   else if (m.type === "fatal") {
     setStatus("could not start python: " + m.error, true);
-    $("#loader").textContent = "Could not start python. Check your connection and reload.";}
+    showLoadError("Could not start python. Check your connection and reload.");}
   else if (m.type === "result") {
     const w = waiting.get(m.id);
     waiting.delete(m.id);
     if (m.ok) w.resolve(m); else w.reject(new Error(m.error));}
 };
-worker.onerror = (e) => setStatus("worker error: " + e.message, true);
+worker.onerror = (e) => {
+  setStatus("worker error: " + e.message, true);
+  showLoadError("Could not start python. Check your connection and reload.");
+};
+
+// only does something while the start-up loading screen is still showing
+function showLoadError(text) {
+  const loader = $("#loader");
+  if (loader) loader.textContent = text;
+}
 
 function setStatus(text, isError = false) {
   const el = $("#status");
@@ -787,6 +791,7 @@ async function loop() {
       else await viewBimodal();
     } catch (err) {
       setStatus("error: " + err.message, true);
+      showLoadError("Could not draw the plot. Try changing a setting or reload.");
     }
   }
   running = false;
