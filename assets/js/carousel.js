@@ -11,7 +11,7 @@
   root.classList.add("carousel");
   root.tabIndex = 0;
   root.setAttribute("role", "region");
-  root.setAttribute("aria-label", "posters and outreach");
+  root.setAttribute("aria-label", root.getAttribute("data-label") || "posters and outreach");
 
   var nav = document.createElement("div");
   nav.className = "carousel-nav";
