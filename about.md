@@ -63,7 +63,7 @@ I play piano, guitar, and kalimba, and have played violin for 18 years. I have p
     <input type="radio" name="music" id="tab-rep" checked>
     <label for="tab-rep">selected repertoire</label>
     <input type="radio" name="music" id="tab-learn">
-    <label for="tab-learn">learning</label>
+    <label for="tab-learn">currently learning</label>
     <div class="panel-rep">
       <h3>violin</h3>
       <ul><li>Sarasate - Introduction and Tarantelle, Op. 43</li><li>Młynarski - Mazurka, Op. 7 No. 1 </li></ul>
