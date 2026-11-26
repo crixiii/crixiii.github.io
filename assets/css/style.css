@@ -516,3 +516,5 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 .repertoire input:focus-visible + label { outline: 2px solid var(--hover); }
 .repertoire .panel-rep, .repertoire .panel-learn { display: none; }
 #tab-rep:checked ~ .panel-rep, #tab-learn:checked ~ .panel-learn { display: block; }
+
+.repertoire h4 { margin: 10px 0 4px; font-weight: 400; font-style: italic; color: var(--dim); }
