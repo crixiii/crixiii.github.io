@@ -440,3 +440,12 @@ body.has-banner h1 {
 :root[data-theme="light"] .theme-toggle .icon-moon {
   display: block;
 }
+
+/* never underline the site header or headings */
+header a, header a:link, header a:visited, header a:hover, header a:focus, header a:active,
+h1, h2, h3, h4, h5, h6,
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+  text-decoration: none !important;
+  border-bottom: none;
+  box-shadow: none;
+}
