@@ -18,11 +18,12 @@ I'm an research assistant at the University of Canterbury, interested in time-do
 
 
 ## hobbies
+{: #hobbies}
 
 ### music, arts and crafts
 
 I play piano, guitar, and kalimba, and have played violin for 18 years. I have performed in local concert orchestras and musicals. My other creative endeavours involve knitting, crocheting, sewing, and watercolour painting. My astro-related craft projects include crocheting a JWST throw and some stars!
-<div class="gallery">
+<div class="posters photos" data-label="hobby photos">
     <figure>
     <a href="{{ '/assets/images/Concert_Aug_2020.jpg' | relative_url }}">
       <img src="{{ '/assets/images/Concert_Aug_2020.jpg' | relative_url }}" alt="playing violin at a concert">
@@ -56,3 +57,36 @@ I play piano, guitar, and kalimba, and have played violin for 18 years. I have p
   </figure>
 </div>
 
+<aside class="repertoire" tabindex="0" aria-label="my music">
+  <span class="repertoire-tab">♪ music</span>
+  <div class="repertoire-body">
+    <input type="radio" name="music" id="tab-rep" checked>
+    <label for="tab-rep">repertoire</label>
+    <input type="radio" name="music" id="tab-learn">
+    <label for="tab-learn">learning</label>
+    <div class="panel-rep">
+      <h3>violin</h3>
+      <ul><li>Song title 1 - Composer</li><li>Song title 2 - Composer</li></ul>
+      <h3>piano</h3>
+      <ul><li>Song title 3 - Composer</li><li>Song title 4 - Composer</li></ul>
+      <h3>guitar &amp; kalimba</h3>
+      <ul><li>Song title 5 - Artist</li><li>Song title 6 - Artist</li></ul>
+    </div>
+    <div class="panel-learn">
+      <ul><li>Learning piece 1 - Composer</li><li>Learning piece 2 - Composer</li></ul>
+    </div>
+  </div>
+</aside>
+
+<script>
+(function () {
+  var box = document.querySelector(".repertoire"), start = document.getElementById("hobbies");
+  function update() {
+    box.classList.toggle("show", start.getBoundingClientRect().top < window.innerHeight * 0.7);
+  }
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
+  window.addEventListener("load", update);
+  update();
+})();
+</script>
