@@ -1,5 +1,6 @@
 import json
 import sys
+from dataclasses import replace
 
 import numpy as np
 
@@ -10,7 +11,7 @@ from frbbeaming.analysis import bimodality
 from frbbeaming.numerics import LN10
 
 
-XLIM = (33.0, 43.0) #need to update for flexible xlims? place under  graph
+XLIM = (32.0, 43.0)  # default; the page sends its own limits as p["xlim"]
 _beams = {}
 _cache = {}
 
@@ -72,23 +73,26 @@ def _thin(a, n=1000):
 def _pdf(p):
     cfg, sim, beam, dist = _setup(p)
     e0 = cfg.e0
+    lo, hi = p.get("xlim", XLIM)
     base = dict(cut=_cut(cfg, beam), e0=float(np.log10(e0)), edge=beam.edge)
     if p["dist"] == "single":
         if isinstance(beam, IsotropicBeam):
             return dict(base, kind="delta")
         x, dens, mass = beam.single_energy_pdf(e0)
         x, y = _thin(x), _thin(dens * LN10)
-        x = np.concatenate([x, [np.log10(e0), XLIM[1] + 1]])
+        x = np.concatenate([x, [np.log10(e0), max(hi, np.log10(e0)) + 1]])
         y = np.concatenate([y, [0.0, 0.0]])
-        if x[0] > XLIM[0]:
-            x = np.concatenate([[XLIM[0] - 1, x[0]], x])
+        if x[0] > lo:
+            x = np.concatenate([[lo - 1, x[0]], x])
             y = np.concatenate([[0.0, 0.0], y])
         return dict(base, kind="curve", x=x, y=y, mass=float(mass))
     if isinstance(beam, RelativisticBeam):
-        grid = np.unique(np.concatenate([np.geomspace(1e31, 10.0**43.5, 350),
+        # about 28 points per dex, matching the density at the default limits
+        n = int(round(28 * (hi - lo + 1.5)))
+        grid = np.unique(np.concatenate([np.geomspace(10.0 ** (lo - 1), 10.0 ** (hi + 0.5), n),
                                          e0 * np.geomspace(10.0**-1.5, 10.0**1.5, 250)]))
     else:
-        grid = beam.default_grid(cfg)
+        grid = beam.default_grid(replace(cfg, xlim=(lo, hi)))
     p_ln = beam.observed_pdf_ln(dist, grid)
     out = dict(base, kind="curve", x=np.log10(grid), y=p_ln * LN10)
     if isinstance(beam, RelativisticBeam):
@@ -107,7 +111,7 @@ def compute_pdf(pjson):
 def compute_profile(pjson):
     p = json.loads(pjson)
     cfg, sim, beam, dist = _setup(p)
-    theta = np.linspace(0, np.pi, 600)
+    theta = np.linspace(0, np.pi, 2000)
     em = beam.emitted_profile(theta)
     return _out(dict(theta=theta, g=np.maximum(beam.g(theta), 1e-300),
                      emitted=None if em is None else np.maximum(em, 1e-300), edge=beam.edge))
@@ -118,9 +122,10 @@ def compute_hist(pjson):
     cfg, sim, beam, dist = _setup(p)
     n = int(p["n_sim"])
     log_e = np.log10(np.maximum(beam.sample(dist, np.random.default_rng(int(p["seed"])), n), 1e-300))
-    bins = np.linspace(XLIM[0], XLIM[1], 111)
+    lo, hi = p.get("xlim", XLIM)
+    bins = np.linspace(lo, hi, 111)
     counts, _ = np.histogram(log_e, bins=bins)
-    return _out(dict(edges=bins, density=counts / n / np.diff(bins), n=n, below=float(np.mean(log_e < XLIM[0])),
+    return _out(dict(edges=bins, density=counts / n / np.diff(bins), n=n, below=float(np.mean(log_e < lo)),
                      cut=_cut(cfg, beam), e0=float(np.log10(cfg.e0))))
 
 

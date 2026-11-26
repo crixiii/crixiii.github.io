@@ -22,7 +22,7 @@ title: frb energies
   .frb-app h1 { margin: 0 0 24px; }
   .frb-app h2 { font-size: 1rem; letter-spacing: 0.04em; color: var(--light); margin: 0 0 12px; }
   .frb-app .layout { display: grid; gap: 16px; grid-template-columns: 1fr; }
-  @media (min-width: 840px) { .frb-app .layout { grid-template-columns: 300px 1fr; align-items: start; } }
+  @media (min-width: 840px) { .frb-app .layout { grid-template-columns: 280px minmax(0, 1fr); align-items: start; } }
   .frb-app .panel { background: var(--panel); border: 3px solid var(--mid); padding: 16px; }
   .frb-app label.field { display: block; font-size: 0.95rem; color: var(--muted); margin: 0 0 4px; }
   .frb-app select { width: 100%; padding: 7px 8px; font: inherit; font-size: 1rem; color: var(--fg); background: var(--field); border: 2px solid var(--mid); border-radius: 0; margin-bottom: 14px; }
@@ -119,7 +119,18 @@ title: frb energies
   .frb-app #card p { font-size: 1rem; }
   .frb-app .pass { color: var(--accent3); } .frb-app .fail { color: var(--err); }
   .frb-app .caution { color: var(--warn); font-size: 0.95rem; margin: 10px 0 0; }
-  @media (min-width: 840px) { .frb-app #plot svg { max-height: calc(100vh - 395px); min-height: 280px; } .frb-app h1 { margin-bottom: 12px; } .frb-app .group { margin-bottom: 6px; } .frb-app select { margin-bottom: 10px; } .frb-app .panel { padding: 12px; } }
+  @media (min-width: 840px) { .frb-app #plot svg { max-height: calc(100vh - 290px); min-height: 400px; } .frb-app h1 { margin-bottom: 12px; } .frb-app .group { margin-bottom: 6px; } .frb-app select { margin-bottom: 10px; } .frb-app .panel { padding: 12px; } }
+  main:has(.frb-app) { max-width: 1500px; }
+  .frb-app .menu-btn { display: none; }
+  @media (max-width: 700px) {
+    .frb-app .menu-btn { display: flex; width: 100%; align-items: center; gap: 12px; margin-bottom: 10px; padding: 8px 10px; font-family: "Pixelify Sans", monospace; font-size: 1.05rem; color: var(--fg); background: transparent; border: 2px solid var(--mid); border-radius: 0; cursor: pointer; }
+    .frb-app .tabs { display: none; }
+    .frb-app .tabs.open { display: flex; flex-direction: column; margin: -10px 0 14px; border: 2px solid var(--mid); border-top: 0; }
+    .frb-app .tab { text-align: left; margin: 0; border: 0; border-left: 3px solid transparent; }
+    .frb-app .tab[aria-selected="true"] { border-left-color: var(--fg); }
+    .frb-app .panel { padding: 10px; }
+  }
+  .frb-app .xrange input { width: 72px; padding: 4px 6px; font: inherit; font-size: 0.9rem; color: var(--fg); background: var(--field); border: 2px solid var(--mid); border-radius: 0; text-align: right; }
 </style>
 <div class="frb-app">
   <h1>FRB beaming</h1>
@@ -135,6 +146,7 @@ title: frb energies
     </section>
 
     <section class="panel" aria-label="results">
+      <button class="menu-btn" id="menu" type="button" aria-expanded="false" aria-controls="tabs"><span aria-hidden="true">☰</span><span id="menuLabel"></span></button>
       <div class="tabs" role="tablist" id="tabs">
         <button class="tab" role="tab" data-tab="pdf">observed pdf</button>
         <button class="tab" role="tab" data-tab="profile">beam profile</button>
@@ -155,6 +167,12 @@ title: frb energies
             </div>
           </div>
         </div>
+      </div>
+      <div class="actions xrange" id="xrange">
+        <span id="xLabel"></span>
+        <label><span class="xpre"></span><input type="number" id="xmin" step="any" aria-label="x-axis minimum"></label>
+        <label>to <span class="xpre"></span><input type="number" id="xmax" step="any" aria-label="x-axis maximum"></label>
+        <button class="btn" id="xreset" type="button">reset x</button>
       </div>
       <p id="readout" aria-live="polite"></p>
       <div id="card"></div>
@@ -195,7 +213,9 @@ const CONTROLS = [
   { id: "n_sim", label: "simulated bursts", min: 3, max: 7.5, step: 0.1, log: true, fmt: (v) => Math.round(v).toLocaleString("en"), show: (p, tab) => tab === "hist" || tab === "bimodal" },
 ];
 const LOGY_DEFAULT = { pdf: false, cdf: false, profile: true, hist: false, heatmap: true, bimodal: false };
-const XLIM = [32, 43];
+const XDEF = { energy: [32, 43], theta: [0, Math.PI] };      // default x limits
+const XBOUND = { energy: [20, 50], theta: [0, Math.PI] };   // furthest the user can go
+const xlims = { energy: [...XDEF.energy], theta: [...XDEF.theta] };
 
 let params = { ...DEFAULTS };
 let tab = "pdf";
@@ -215,6 +235,7 @@ const lightMode = () =>
 
 const PLASMA = () => lightMode() ? [...PURPLES].reverse() : PURPLES;
   
+const xKind = () => (tab === "pdf" || tab === "hist" ? "energy" : tab === "profile" ? "theta" : null);
 const modeKey = () => (tab === "pdf" && view.cdf ? "cdf" : tab);
 let lastSvg = null;
 
@@ -280,6 +301,10 @@ function payload(fn) {
     if (c.show(params, tab)) p[c.id] = params[c.id];
   }
   if (fn === "compute_profile") p.dist = "single";
+  const [lo, hi] = xlims.energy;
+  // the pdf is only recomputed when the view goes outside the default range
+  if (fn === "compute_pdf") p.xlim = [Math.min(lo, XDEF.energy[0]), Math.max(hi, XDEF.energy[1])];
+  if (fn === "compute_hist") p.xlim = [lo, hi];
   if (fn === "compute_hist" || fn === "compute_bimodality") p.n_sim = Math.round(params.n_sim);
   return p;
 }
@@ -347,7 +372,8 @@ function drawPlot(spec) {
     s += `<line x1="${m.l}" x2="${W - m.r}" y1="${yy}" y2="${yy}" stroke="${C.grid}"/>`;
     s += `<text x="${m.l - 8}" y="${yy + 4}" text-anchor="end" fill="${C.mut}">${ylog ? pow10Label(t) : fmtNum(t)}</text>`;
   }
-  const xTicks = spec.xpow10 ? Array.from({ length: Math.floor(x1 / 2) - Math.ceil(x0 / 2) + 1 }, (_, i) => (Math.ceil(x0 / 2) + i) * 2) : niceTicks(x0, x1);
+  const dx = Math.max(1, Math.ceil((x1 - x0) / 6));
+  const xTicks = spec.xpow10 ? Array.from({ length: Math.max(0, Math.floor(x1 / dx) - Math.ceil(x0 / dx) + 1) }, (_, i) => (Math.ceil(x0 / dx) + i) * dx) : niceTicks(x0, x1);
   for (const t of xTicks) {
     s += `<line x1="${X(t)}" x2="${X(t)}" y1="${m.t}" y2="${m.t + ih}" stroke="${C.grid}"/>`;
     s += `<text x="${X(t)}" y="${m.t + ih + 18}" text-anchor="middle" fill="${C.mut}">${spec.xpow10 ? pow10Label(t) : fmtNum(t)}</text>`;
@@ -412,6 +438,11 @@ function stepXY(edges, dens, floor) {
 const maxOf = (a) => a.reduce((m, v) => (v > m ? v : m), -Infinity);
 const minPos = (a) => a.reduce((m, v) => (v > 0 && v < m ? v : m), Infinity);
 
+function visibleTop(xs, ys, [lo, hi]) {
+  let top = Math.max(interp(xs, ys, lo), interp(xs, ys, hi));
+  for (let i = 0; i < xs.length; i++) if (xs[i] >= lo && xs[i] <= hi && ys[i] > top) top = ys[i];
+  return top > 0 ? top : maxOf(ys) || 1;
+}
 function yRange(top, log) {
   if (log) { const t = top * 3; return [t / 1e6, t]; }
   return [0, top * 1.1];
@@ -445,27 +476,28 @@ async function viewPdf() {
   const d = await getData("compute_pdf");
   const layers = [], legend = [];
   const log = logy[modeKey()];
-  const bandTo = Math.min(d.cut, XLIM[1]);
-  if (bandTo > XLIM[0]) layers.push({ type: "band", x0: XLIM[0], x1: bandTo, cls: "band" });
+  const xl = [...xlims.energy];
+  const bandTo = Math.min(d.cut, xl[1]);
+  if (bandTo > xl[0]) layers.push({ type: "band", x0: xl[0], x1: bandTo, cls: "band" });
   layers.push({ type: "vline", x: d.e0, label: "E₀" });
   let spec;
   if (d.kind === "delta") {
-    if (view.cdf) layers.push({ type: "line", x: [XLIM[0], d.e0, d.e0, XLIM[1]], y: [1, 1, 0, 0], cls: "main" });
+    if (view.cdf) layers.push({ type: "line", x: [xl[0], d.e0, d.e0, xl[1]], y: [1, 1, 0, 0], cls: "main" });
     else layers.push({ type: "arrow", x: d.e0, h: 1 });
-    spec = { title: "all bursts at E0", xlim: XLIM, ylim: [0, 1.1], xpow10: true, xlabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: view.cdf ? "P(E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> &gt; E)</tspan>" : "probability per dex", layers, legend: [] };
+    spec = { title: "all bursts at E0", xlim: xl, ylim: [0, 1.1], xpow10: true, xlabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: view.cdf ? "P(E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> &gt; E)</tspan>" : "probability per dex", layers, legend: [] };
     currentMain = null;
     $("#readout").textContent = "an isotropic beam with a single energy gives a delta function at E₀.";
   } else {
     const yy = view.cdf ? cumulative(d).map((v) => Math.max(0, 1 - v)) : d.y;
-    const range = view.cdf ? (log ? [1e-6, 2] : [0, 1.05]) : yRange(maxOf(d.y), log);
+    const range = view.cdf ? (log ? [1e-6, 2] : [0, 1.05]) : yRange(visibleTop(d.x, d.y, xl), log);
     withPin(layers, legend, { x: d.x, y: yy });
     layers.push({ type: "line", x: d.x, y: log ? yy.map((v) => Math.max(v, range[0] / 10)) : yy, cls: "main", fill: !view.cdf });
     currentMain = { x: d.x, y: yy };
-    spec = { title: view.cdf ? "observed energy 1 - cdf" : "observed energy pdf", xlim: XLIM, ylim: range, ylog: log, xpow10: true, xlabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: view.cdf ? "P(E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> &gt; E)</tspan>" : "probability per dex", layers, legend,
+    spec = { title: view.cdf ? "observed energy 1 - cdf" : "observed energy pdf", xlim: xl, ylim: range, ylog: log, xpow10: true, xlabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: view.cdf ? "P(E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> &gt; E)</tspan>" : "probability per dex", layers, legend,
       hover: { x: d.x, y: yy, xname: "log10 E_obs", yname: view.cdf ? "1-cdf" : "pdf/dex" } };
     const notes = [];
-    if (view.cdf && cdfOffset > 0.005) notes.push(`${(100 * cdfOffset).toFixed(1)}% of bursts fall below the plotted range, so 1 - cdf starts at ${(1 - cdfOffset).toFixed(3)}`);
-    if (view.cdf && yy[yy.length - 1] > 1e-4) notes.push(`1 - cdf is still ${yy[yy.length - 1].toExponential(2)} at the right edge of the plot`);
+    if (view.cdf && 1 - interp(d.x, yy, xl[0]) > 0.005) notes.push(`${(100 * (1 - interp(d.x, yy, xl[0]))).toFixed(1)}% of bursts fall below the plotted range, so 1 - cdf starts at ${interp(d.x, yy, xl[0]).toFixed(3)}`);
+    if (view.cdf && interp(d.x, yy, xl[1]) > 1e-4) notes.push(`1 - cdf is still ${interp(d.x, yy, xl[1]).toExponential(2)} at the right edge of the plot`);
     if (!view.cdf && d.total != null) notes.push(`∫ pdf = ${d.total.toFixed(4)} (normalisation check)`);
     if (d.mass != null && d.mass > 1e-4) notes.push(`${(100 * d.mass).toFixed(1)}% of bursts sit in a point mass at E₀ (the plateau)`);
     $("#readout").textContent = notes.join("  ·  ");
@@ -486,7 +518,7 @@ async function viewProfile() {
   layers.push({ type: "line", x: d.theta, y: d.g, cls: "main" });
   legend.push({ cls: "main", label: "beam strength g(θ) = E_obs / E" });
   currentMain = { x: d.theta, y: d.g };
-  drawPlot({ title: "beam strength against observer angle", xlim: [0, Math.PI], ylim: range, ylog: log, xlabel: "observer angle θ [rad]", ylabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'>/E</tspan>", layers, legend, legendRight: true,
+  drawPlot({ title: "beam strength against observer angle", xlim: [...xlims.theta], ylim: range, ylog: log, xlabel: "observer angle θ [rad]", ylabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'>/E</tspan>", layers, legend, legendRight: true,
     hover: { x: d.theta, y: d.g, xname: "θ [rad]", yname: "g" } });
   $("#readout").textContent = "";
   setStatus(`python ready · computed in ${(d._ms / 1000).toFixed(2)} s`);
@@ -570,11 +602,12 @@ async function viewHeatmap() {
 async function viewHist() {
   const h = await getData("compute_hist");
   const log = logy.hist;
+  const xl = [...xlims.energy];
   const layers = [], legend = [];
   const top = Math.max(maxOf(h.density), 1e-9);
   const range = yRange(top, log);
-  const bandTo = Math.min(h.cut, XLIM[1]);
-  if (bandTo > XLIM[0]) layers.push({ type: "band", x0: XLIM[0], x1: bandTo, cls: "band" });
+  const bandTo = Math.min(h.cut, xl[1]);
+  if (bandTo > xl[0]) layers.push({ type: "band", x0: xl[0], x1: bandTo, cls: "band" });
   layers.push({ type: "vline", x: h.e0, label: "E₀" });
   const st = stepXY(h.edges, h.density, range[0] / 10);
   withPin(layers, legend, st);
@@ -585,9 +618,9 @@ async function viewHist() {
     if (d.kind === "curve") { layers.push({ type: "line", x: d.x, y: log ? d.y.map((v) => Math.max(v, range[0] / 10)) : d.y, cls: "alt", w: 1.5 }); legend.push({ cls: "alt", label: "numerical pdf" }); }
   }
   currentMain = { x: st.x, y: st.y };
-  drawPlot({ title: "simulated observed energies", xlim: XLIM, ylim: range, ylog: log, xpow10: true, xlabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend,
+  drawPlot({ title: "simulated observed energies", xlim: xl, ylim: range, ylog: log, xpow10: true, xlabel: "E<tspan dy='3' font-size='10'>obs</tspan><tspan dy='-3'> [erg]</tspan>", ylabel: "probability per dex", layers, legend,
     hover: { x: st.x, y: st.y, xname: "log10 E_obs", yname: "density/dex" } });
-  $("#readout").textContent = h.below > 0 ? `${(100 * h.below).toFixed(1)}% of simulated bursts fall below 10^${XLIM[0]} erg and are off the left of the plot.` : "";
+  $("#readout").textContent = h.below > 0 ? `${(100 * h.below).toFixed(1)}% of simulated bursts fall below 10^${xl[0]} erg and are off the left of the plot.` : "";
   setStatus(`python ready · computed in ${(h._ms / 1000).toFixed(2)} s`);
 }
 
@@ -716,9 +749,19 @@ function syncControls(setSliders = true) {
   $("#logyText").textContent = tab === "heatmap" ? "log colour scale" : "log y-axis";
   $("#pin").hidden = $("#unpin").hidden = tab === "heatmap";
 
-  document.querySelectorAll(".tab").forEach((t) =>
-    t.setAttribute("aria-selected", t.dataset.tab === tab)
-  );
+  document.querySelectorAll(".tab").forEach((t) => {
+    t.setAttribute("aria-selected", t.dataset.tab === tab);
+    if (t.dataset.tab === tab) $("#menuLabel").textContent = t.textContent;
+  });
+
+  const kind = xKind();
+  $("#xrange").hidden = !kind;
+  if (kind) {
+    $("#xLabel").textContent = kind === "energy" ? "x-axis [erg]:" : "x-axis θ [rad]:";
+    document.querySelectorAll(".xpre").forEach((e) => (e.textContent = kind === "energy" ? "10^" : ""));
+    $("#xmin").value = +xlims[kind][0].toFixed(3);
+    $("#xmax").value = +xlims[kind][1].toFixed(3);
+  }
 }
 
 /* ---------- refresh loop ---------- */
@@ -750,9 +793,28 @@ async function loop() {
   delete $("#plot").dataset.busy;
 }
 
+/* ---------- x limits ---------- */
+function setXlim(kind, lo, hi) {
+  const [min, max] = XBOUND[kind];
+  const clamp = (v) => Math.max(min, Math.min(max, v));
+  if (!Number.isFinite(lo) || !Number.isFinite(hi)) return false;
+  lo = clamp(lo); hi = clamp(hi);
+  if (hi - lo < (kind === "energy" ? 0.5 : 0.05)) return false;
+  xlims[kind] = [lo, hi];
+  return true;
+}
+function onXlimChange() {
+  const kind = xKind();
+  const read = (id) => ($(id).value === "" ? NaN : Number($(id).value));
+  const ok = setXlim(kind, read("#xmin"), read("#xmax"));
+  syncControls(false);
+  if (ok) refresh();
+  else setStatus("x-axis: the minimum needs to be below the maximum", true);
+}
+
 /* ---------- state in the url ---------- */
 function saveHash() {
-  try { history.replaceState(null, "", "#" + encodeURIComponent(JSON.stringify({ t: tab, p: params, c: view.cdf, r: view.hmRange }))); } catch (_) { /* ignore */ }
+  try { history.replaceState(null, "", "#" + encodeURIComponent(JSON.stringify({ t: tab, p: params, c: view.cdf, r: view.hmRange, x: xlims }))); } catch (_) { /* ignore */ }
 }
 function loadHash() {
   try {
@@ -761,13 +823,24 @@ function loadHash() {
     if (["pdf", "profile", "hist", "heatmap", "bimodal"].includes(s.t)) tab = s.t;
     if (s.c === true) view.cdf = true;
     if (typeof s.r === "number" && s.r > 0) view.hmRange = s.r;
+    if (s.x) for (const k of Object.keys(XDEF)) if (Array.isArray(s.x[k])) setXlim(k, s.x[k][0], s.x[k][1]);
   } catch (_) { /* no saved state */ }
 }
 
 /* ---------- wiring ---------- */
+function setMenu(open) {
+  $("#tabs").classList.toggle("open", open);
+  $("#menu").setAttribute("aria-expanded", open);
+}
+$("#menu").addEventListener("click", () => setMenu(!$("#tabs").classList.contains("open")));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+$("#xmin").addEventListener("change", onXlimChange);
+$("#xmax").addEventListener("change", onXlimChange);
+$("#xreset").addEventListener("click", () => { const k = xKind(); xlims[k] = [...XDEF[k]]; syncControls(false); refresh(); });
 $("#tabs").addEventListener("click", (e) => {
   const t = e.target.closest(".tab");
   if (!t) return;
+  setMenu(false);
   tab = t.dataset.tab; syncControls(); $("#readout").textContent = ""; refresh();
 });
 $("#logy").addEventListener("change", (e) => { logy[modeKey()] = e.target.checked; refresh(); });
@@ -775,7 +848,7 @@ $("#cdf").addEventListener("change", (e) => { view.cdf = e.target.checked; syncC
 $("#hmRange").addEventListener("change", (e) => { view.hmRange = +e.target.value; refresh(); });
 $("#pin").addEventListener("click", () => { if (currentMain) { pinned[modeKey()] = { type: "line", x: currentMain.x, y: currentMain.y }; refresh(); } });
 $("#unpin").addEventListener("click", () => { delete pinned[modeKey()]; refresh(); });
-$("#reset").addEventListener("click", () => { params = { ...DEFAULTS }; syncControls(); refresh(); });
+$("#reset").addEventListener("click", () => { params = { ...DEFAULTS }; for (const k of Object.keys(XDEF)) xlims[k] = [...XDEF[k]]; syncControls(); refresh(); });
 $("#share").addEventListener("click", async () => {
   saveHash();
   try { await navigator.clipboard.writeText(location.href); setStatus("link copied"); } catch (_) { setStatus("copy the address bar to share this view"); }
