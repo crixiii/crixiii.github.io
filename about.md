@@ -8,7 +8,7 @@ permalink: /about/
 
 <img class="pfp" src="{{ '/assets/images/grad.jpg' | relative_url }}" alt="me at graduation!">
 
-I'm an research assistant at the University of Canterbury, interested in time-domain astronomy, fast transients and sky surveys. My work involves modelling fast transients, from GRBs in TESS data to FRB energetics.
+I'm a research assistant at the University of Canterbury, interested in time-domain astronomy, fast transients and sky surveys. My work involves modelling fast transients, from GRBs in TESS data to FRB energetics.
 
 - **Institution:** University of Canterbury
 - **Supervisors:** Dr. Ryan Ridden-Harper, Dr. Joscha Jahns-Schindler
@@ -61,16 +61,18 @@ I play piano, guitar, and kalimba, and have played violin for 18 years. I have p
   <span class="repertoire-tab">♪ music</span>
   <div class="repertoire-body">
     <input type="radio" name="music" id="tab-rep" checked>
-    <label for="tab-rep">selected repertoire</label>
+    <label for="tab-rep">repertoire</label>
     <input type="radio" name="music" id="tab-learn">
-    <label for="tab-learn">currently learning</label>
+    <label for="tab-learn">learning</label>
     <div class="panel-rep">
+      <h4>selected repertoire</h4>
       <h3>violin</h3>
       <ul><li>Sarasate - Introduction and Tarantelle, Op. 43</li><li>Młynarski - Mazurka, Op. 7 No. 1 </li></ul>
       <h3>piano</h3>
       <ul><li>Rachmaninoff - Prelude in C-sharp minor, Op. 3 No. 2</li><li>Sullivan - Twilight, Op. 12</li></ul>
     </div>
     <div class="panel-learn">
+      <h4>currently learning</h4>
       <ul><li>Wieniawski - Scherzo Tarantelle, Op. 16 </li><li>Reger - Sonate, Op. 139</li></ul>
     </div>
   </div>
