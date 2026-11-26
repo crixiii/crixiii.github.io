@@ -449,3 +449,70 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
   border-bottom: none;
   box-shadow: none;
 }
+
+/* about page photo carousel: show whole photos, whatever their shape */
+.posters.photos { clear: both; }
+.posters.photos img { aspect-ratio: 1 / 1; object-fit: contain; }
+
+/* repertoire sidebar: slides out on hover, tap or keyboard focus */
+.repertoire {
+  position: fixed;
+  top: 30vh;
+  right: 0;
+  z-index: 3;
+  width: 250px;
+  transform: translateX(100%);
+  visibility: hidden;
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s;
+  background: var(--header-bg);
+  border: 3px solid var(--mid);
+  border-right: 0;
+}
+
+.repertoire:hover,
+.repertoire:focus,
+.repertoire:focus-within {
+  transform: translateX(0);
+}
+
+.repertoire-tab {
+  position: absolute;
+  top: -3px;
+  right: 100%;
+  writing-mode: vertical-rl;
+  padding: 12px 6px;
+  font-family: "Pixelify Sans", monospace;
+  color: var(--light);
+  background: var(--header-bg);
+  border: 3px solid var(--mid);
+}
+
+.repertoire-body {
+  max-height: 55vh;
+  overflow-y: auto;
+  padding: 4px 16px;
+}
+
+.repertoire h3 { margin: 10px 0 4px; }
+.repertoire ul { margin: 0 0 10px; padding-left: 18px; }
+.repertoire li { font-size: 1rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .repertoire { transition: none; }
+}
+
+.repertoire.show { visibility: visible; opacity: 1; }
+.repertoire input { position: absolute; opacity: 0; }
+.repertoire label {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 6px;
+  font-family: "Pixelify Sans", monospace;
+  color: var(--mid);
+  border-bottom: 3px solid transparent;
+}
+.repertoire input:checked + label { color: var(--hover); border-bottom-color: var(--hover); }
+.repertoire input:focus-visible + label { outline: 2px solid var(--hover); }
+.repertoire .panel-rep, .repertoire .panel-learn { display: none; }
+#tab-rep:checked ~ .panel-rep, #tab-learn:checked ~ .panel-learn { display: block; }
